@@ -9,46 +9,51 @@ namespace _2IMA15_Project_Team9
 {
     class DataReaderWriter
     {
-        public List<List<double>> ReadData(string filepath)
+        public List<DataGenerator.DataPoint> ReadRawData(string filepath)
         {
-            var data = new List<List<double>>();
-            
-            string[] lines = File.ReadAllLines(filepath);
-            for (int i = 1; i < lines.Length; i++)
+            FileStream fs = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            StreamReader sr = new StreamReader(fs);
+
+            var data = new List<DataGenerator.DataPoint>();
+            var lines = new List<string>();
+            string c = sr.ReadLine();
+            while (c != null)
             {
-                var t = new List<double>();
-                if (lines[i].Contains(','))
-                {
-                    var ls = lines[i].Split(',');
-                    for (int j = 0; j < ls.Length; j++)
-                    {
-                        t.Add(Convert.ToDouble(ls[j]));
-                    }
-                }
-                else
-                {
-                    t.Add(Convert.ToDouble(lines[i]));
-                }
-                data.Add(t);
+                lines.Add(c);
+                c = sr.ReadLine();
+            }
+
+            for (int i = 1; i < lines.Count; i++)
+            {
+                data.Add(new DataGenerator.DataPoint(Convert.ToDouble(lines[i].Split(',')[0]), Convert.ToDouble(lines[i].Split(',')[1])));
             }
 
             return data;
         }
 
-        public void WriteData(List<List<double>> data, string filepath)
+        public void WriteRawData(List<DataGenerator.DataPoint> data, string filepath)
         {
-            StreamWriter fileWriter = new StreamWriter(filepath);
-            foreach (List<double> line in data)
+            FileStream fs = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            StreamWriter sw = new StreamWriter(fs);
+            
+            int r = 0, g = 0, b = 0;
+            for (int i = 0; i < data.Count; i++)
             {
-                string s = "";
-                foreach (var d in line)
-                {
-                    s += d + ",";
-                }
-                //Remove the last comma.
-                s.Remove(s.Length - 1, 1);
-                fileWriter.WriteLine(s);
+                if (data[i].Color == 1) r++;
+                else if (data[i].Color == 2) b++;
+                else g++;
             }
+            sw.WriteLine(r + "," + b + "," + g);
+
+            foreach (DataGenerator.DataPoint p in data)
+            {
+                sw.WriteLine(p.X + "," + p.Y);
+            }
+
+            sw.Close();
+            sw.Dispose();
+            fs.Close();
+            fs.Dispose();
         }
     }
 }

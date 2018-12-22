@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-
-namespace _2IMA15_Project_Team9.DataGenerator
+﻿namespace _2IMA15_Project_Team9.DataGenerator
 {
     enum PointColor : int { Blue = 1, Red = 2, Green = 3 }
 
@@ -24,11 +17,6 @@ namespace _2IMA15_Project_Team9.DataGenerator
             X = x;
             Y = y;
             Cluster_Id = 0;
-        }
-
-        public DataPoint()
-        {
-
         }
     }
 }

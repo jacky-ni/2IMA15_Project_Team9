@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace _2IMA15_Project_Team9
@@ -14,8 +10,12 @@ namespace _2IMA15_Project_Team9
     {
         // For better display.
         private int _margin = 60;
+
         private Form _form = null;
         private List<DataGenerator.DataPoint> _rawdata = null;
+        private DataReaderWriter _dataReaderWriter = new DataReaderWriter();
+
+        private string _directoryPath = "";
 
         public Form1()
         {
@@ -24,14 +24,17 @@ namespace _2IMA15_Project_Team9
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(_directoryPath))
+                textBox4_DoubleClick(sender, e);
+
             DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateRamdonVertices(Convert.ToInt32(textBox3.Text) * 6);
-            dg.ColorVertices(_rawdata);
+            _rawdata = dg.GenerateGeneralCaseDataset(Convert.ToInt32(textBox3.Text));
 
             _form = new Form();
             _form.Height = Convert.ToInt32(textBox1.Text) + _margin;
             _form.Width = Convert.ToInt32(textBox2.Text) + _margin;
             _form.Show();
+            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + @"\GeneralCaseDataset.txt");
 
             // For better display.
             foreach (var p in _rawdata)
@@ -42,6 +45,8 @@ namespace _2IMA15_Project_Team9
 
             _form.Paint += _form_Paint;
             _form.FormClosing += _form_FormClosing;
+
+            toolStripStatusLabel1.Text = "Dataset is stored in file '" + _directoryPath + @"\GeneralCaseDataset.txt'";
         }
 
         private void _form_FormClosing(object sender, FormClosingEventArgs e)
@@ -67,18 +72,44 @@ namespace _2IMA15_Project_Team9
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(_directoryPath))
+                textBox4_DoubleClick(sender, e);
 
+            DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+            _rawdata = dg.GenerateGeneralBadCaseDataset(Convert.ToInt32(textBox3.Text), 3);
+
+            _form = new Form();
+            _form.Height = Convert.ToInt32(textBox1.Text) + _margin;
+            _form.Width = Convert.ToInt32(textBox2.Text) + _margin;
+            _form.Show();
+            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + @"\GeneralBadCaseDataset.txt");
+
+            // For better display.
+            foreach (var p in _rawdata)
+            {
+                p.X += _margin / 6;
+                p.Y += _margin / 6;
+            }
+
+            _form.Paint += _form_Paint;
+            _form.FormClosing += _form_FormClosing;
+
+            toolStripStatusLabel1.Text = "Dataset is stored in file '" + _directoryPath + @"\GeneralBadCaseDataset.txt'";
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(_directoryPath))
+                textBox4_DoubleClick(sender, e);
+
             DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateBestCaseDataset(Convert.ToInt32(textBox3.Text) * 6);
+            _rawdata = dg.GenerateBestCaseDataset(Convert.ToInt32(textBox3.Text));
 
             _form = new Form();
             _form.Height = Convert.ToInt32(textBox1.Text) + _margin;
             _form.Width = Convert.ToInt32(textBox2.Text) + _margin;
             _form.Show();
+            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + @"\BestCaseDataset.txt");
 
             // For better display.
             foreach (var p in _rawdata)
@@ -89,17 +120,23 @@ namespace _2IMA15_Project_Team9
 
             _form.Paint += _form_Paint;
             _form.FormClosing += _form_FormClosing;
+
+            toolStripStatusLabel1.Text = "Dataset is stored in file '" + _directoryPath + @"\BestCaseDataset.txt'";
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(_directoryPath))
+                textBox4_DoubleClick(sender, e);
+
             DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateWorstCaseDataset(Convert.ToInt32(textBox3.Text) * 6);
+            _rawdata = dg.GenerateWorstCaseDataset(Convert.ToInt32(textBox3.Text));
 
             _form = new Form();
             _form.Height = Convert.ToInt32(textBox1.Text) + _margin;
             _form.Width = Convert.ToInt32(textBox2.Text) + _margin;
             _form.Show();
+            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + @"\WorstCaseDataset.txt");
 
             // For better display.
             foreach (var p in _rawdata)
@@ -110,6 +147,13 @@ namespace _2IMA15_Project_Team9
 
             _form.Paint += _form_Paint;
             _form.FormClosing += _form_FormClosing;
+
+            toolStripStatusLabel1.Text = "Dataset is stored in file '" + _directoryPath + @"\WorstCaseDataset.txt'";
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
@@ -145,5 +189,22 @@ namespace _2IMA15_Project_Team9
                 textBox3.Text = "";
             }
         }
+
+        private void textBox4_DoubleClick(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.ShowDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                textBox4.Text = fbd.SelectedPath;
+            }
+            toolStripStatusLabel1.Text = "Dataset is stored in directory '" + fbd.SelectedPath + "'";
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            _directoryPath = textBox4.Text;
+        }
+
     }
 }

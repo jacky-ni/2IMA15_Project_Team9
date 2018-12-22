@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 
 namespace _2IMA15_Project_Team9.DataGenerator
 {
@@ -19,7 +15,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
             _canvasWidth = width;
         }
 
-        public List<DataPoint> GenerateRamdonVertices(int n)
+        public List<DataPoint> GenerateGeneralCaseDataset(int n)
         {
             var dic = new Dictionary<string, DataPoint>();
             
@@ -50,10 +46,44 @@ namespace _2IMA15_Project_Team9.DataGenerator
                 }
                 dic.Add(j + "," + k, new DataPoint(xs[j], ys[k]));
             }
-
+            ColorVertices(dic.Values.ToList());
             return dic.Values.ToList();
         }
+        
+        private void ColorVertices(List<DataPoint> vertices)
+        {
+            if (vertices.Count < 6) throw new Exception("Datagenerator - ColorVertices: Insifficient data!");
 
+            vertices[0].Color = 1;
+            vertices[1].Color = 1;
+            vertices[2].Color = 2;
+            vertices[3].Color = 2;
+            vertices[4].Color = 3;
+            vertices[5].Color = 3;
+
+            int counter = 6;
+            Random r = new Random();
+            while (counter < vertices.Count)
+            {
+                vertices[counter].Color = r.Next(3) + 1;
+                vertices[counter + 1].Color = r.Next(3) + 1;
+                counter += 2;
+            }
+        }
+
+        public List<DataPoint> GenerateGeneralBadCaseDataset(int n, int numberOfClusters)
+        {
+            var data = GenerateGeneralCaseDataset(n);
+            KMeansAlg km = new KMeansAlg(numberOfClusters, data);
+            km.InitializeCentroids(new List<DataPoint>
+                    { new DataPoint(0, 0), new DataPoint(_canvasWidth/2, _canvasHeight/2), new DataPoint(_canvasWidth , _canvasHeight) });
+
+            km.Cluster();
+            data.ForEach(x => x.Color = x.Cluster_Id + 1);
+            
+            return data;
+        }
+        
         public List<DataPoint> GenerateWorstCaseDataset(int n)
         {
             var left_top = new Dictionary<string, DataPoint>();
@@ -209,35 +239,6 @@ namespace _2IMA15_Project_Team9.DataGenerator
             }
 
             return top.Values.Union(bot.Values).ToList();
-        }
-
-        public void ColorVertices(List<DataPoint> vertices)
-        {
-            if (vertices.Count < 6) throw new Exception("Datagenerator - ColorVertices: Insifficient data!");
-
-            vertices[0].Color = 1;
-            vertices[1].Color = 1;
-            vertices[2].Color = 2;
-            vertices[3].Color = 2;
-            vertices[4].Color = 3;
-            vertices[5].Color = 3;
-
-            int counter = 6;
-            Random r = new Random();
-            while (counter < vertices.Count)
-            {
-                vertices[counter].Color = r.Next(3) + 1;
-                vertices[counter + 1].Color = r.Next(3) + 1;
-                counter += 2;
-            }
-        }
-
-        public void ColorGroupedVertices(List<List<DataPoint>> groupedVertices)
-        {
-            if (groupedVertices.Count != 3) throw new Exception("Datagenerator - ColorGroupedVertices: Invalid data!");
-            groupedVertices[0].ForEach(x => x.Color = 1);
-            groupedVertices[1].ForEach(x => x.Color = 2);
-            groupedVertices[2].ForEach(x => x.Color = 3);
         }
 
     }
