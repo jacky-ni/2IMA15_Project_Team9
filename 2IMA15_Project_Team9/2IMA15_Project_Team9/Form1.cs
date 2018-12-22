@@ -136,5 +136,14 @@ namespace _2IMA15_Project_Team9
             }
         }
 
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox3.Text == "") return;
+            if (Convert.ToDouble(textBox3.Text) / 6 > Convert.ToDouble(textBox1.Text) * Convert.ToDouble(textBox2.Text))
+            {
+                MessageBox.Show("The amount of points should be less than or equal to canvas width * canvas height!");
+                textBox3.Text = "";
+            }
+        }
     }
 }
