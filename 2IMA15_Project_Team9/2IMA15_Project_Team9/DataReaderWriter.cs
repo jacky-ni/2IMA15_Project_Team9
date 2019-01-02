@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace _2IMA15_Project_Team9
@@ -28,14 +25,37 @@ namespace _2IMA15_Project_Team9
                 data.Add(new DataGenerator.DataPoint(Convert.ToDouble(lines[i].Split(',')[0]), Convert.ToDouble(lines[i].Split(',')[1])));
             }
 
+            var splits = lines[0].Split(',');
+            int r = Convert.ToInt32(splits[0]), g = Convert.ToInt32(splits[1]), b = Convert.ToInt32(splits[2]);
+
+            for (int i = 0; i < r; i++)
+            {
+                data[i].Color = 1;
+            }
+            for (int i = r; i < r + g; i++)
+            {
+                data[i].Color = 2;
+            }
+            for (int i = r + g; i < r + g + b; i++)
+            {
+                data[i].Color = 3;
+            }
+            
+            sr.Close();
+            sr.Dispose();
+            fs.Close();
+            fs.Dispose();
+
             return data;
         }
 
         public void WriteRawData(List<DataGenerator.DataPoint> data, string filepath)
         {
-            FileStream fs = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            FileStream fs = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
-            
+            // Clear previous content.
+            fs.SetLength(0);
+
             int r = 0, g = 0, b = 0;
             for (int i = 0; i < data.Count; i++)
             {
@@ -44,10 +64,27 @@ namespace _2IMA15_Project_Team9
                 else g++;
             }
             sw.WriteLine(r + "," + b + "," + g);
-
+            
             foreach (DataGenerator.DataPoint p in data)
             {
-                sw.WriteLine(p.X + "," + p.Y);
+                if (p.Color == 1)
+                {
+                    sw.WriteLine(p.X + "," + p.Y);
+                }
+            }
+            foreach (DataGenerator.DataPoint p in data)
+            {
+                if (p.Color == 2)
+                {
+                    sw.WriteLine(p.X + "," + p.Y);
+                }
+            }
+            foreach (DataGenerator.DataPoint p in data)
+            {
+                if (p.Color == 3)
+                {
+                    sw.WriteLine(p.X + "," + p.Y);
+                }
             }
 
             sw.Close();

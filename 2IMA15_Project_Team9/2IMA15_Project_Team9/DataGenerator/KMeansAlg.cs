@@ -141,6 +141,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
                     _normalizedData[i].Cluster_Id = _rawData[i].Cluster_Id = newClusterId;
                 }
             }
+
             if (EmptyCluster(_normalizedData)) return false;
             return changed;
         }
