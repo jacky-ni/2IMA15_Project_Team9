@@ -113,8 +113,8 @@ namespace _2IMA15_Project_Team9
             {
                 Line l = null;
                 initialIntersections.TryGetValue(key, out l);
-                ranker += 1;
                 l.Rank = ranker;
+                ranker += 1;
             }
 
             var line = lines.Find(x => x.Rank == lines.Count / 2);
@@ -148,11 +148,7 @@ namespace _2IMA15_Project_Team9
                     if (l1.D != l2.D && l1.ID < l2.ID)
                     {
                         var intersec = new Intersection(l1, l2);
-                        //if (intersec.IntersectionPoint.X <= _width && intersec.IntersectionPoint.X >= 0
-                        //    && intersec.IntersectionPoint.Y >= 0 && intersec.IntersectionPoint.Y <= _height)
-                        //{
-                            intersections.Add(intersec);
-                        //}
+                        intersections.Add(intersec);
                     }
                 }
             }
