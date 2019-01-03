@@ -7,16 +7,19 @@
         // Location of the data points.
         public double X { get; set; }
         public double Y { get; set; }
-        public int Color { get; set; }
 
         // Cluster ID.
-        public int Cluster_Id { get; set; }
-
+        public int Color { get; set; }
+        
         public DataPoint(double x, double y)
         {
             X = x;
             Y = y;
-            Cluster_Id = 0;
+        }
+
+        public override string ToString()
+        {
+            return "Position: (X: " + X + ", " + "Y: " + Y + "), Color: " + (PointColor)Color;
         }
     }
 }

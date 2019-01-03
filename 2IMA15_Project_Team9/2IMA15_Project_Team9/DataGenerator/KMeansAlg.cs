@@ -43,7 +43,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
         {
             for (int i = 0; i < centroids.Count; i++)
             {
-                centroids[i].Cluster_Id = i;
+                centroids[i].Color = i;
                 _clusters.Add(centroids[i]);
             }
         }
@@ -74,14 +74,14 @@ namespace _2IMA15_Project_Team9.DataGenerator
             // Make sure that each there are at least one element in each cluster.
             for (int i = 0; i < _numberOfClusters; i++)
             {
-                _normalizedData[i].Cluster_Id = i;
-                _rawData[i].Cluster_Id = i;
+                _normalizedData[i].Color = i;
+                _rawData[i].Color = i;
             }
             for (int i = _numberOfClusters; i < _normalizedData.Count; i++)
             {
                 var id = r.Next(0, _numberOfClusters);
-                _normalizedData[i].Cluster_Id = id;
-                _rawData[i].Cluster_Id = id;
+                _normalizedData[i].Color = id;
+                _rawData[i].Color = id;
             }
         }
         
@@ -90,7 +90,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
             // In case one cluster becomes empty.
             if (EmptyCluster(_normalizedData)) return false;
 
-            var clusters = _normalizedData.GroupBy(a => a.Cluster_Id).OrderBy(a => a.Key);
+            var clusters = _normalizedData.GroupBy(a => a.Color).OrderBy(a => a.Key);
             int clusterIndex = 0;
             double x = 0;
             double y = 0;
@@ -112,7 +112,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
 
         private bool EmptyCluster(List<DataPoint> data)
         {
-            var emptyCluster = data.GroupBy(a => a.Cluster_Id).OrderBy(a => a.Key).Select(a => new { Cluster = a.Key, Count = a.Count() });
+            var emptyCluster = data.GroupBy(a => a.Color).OrderBy(a => a.Key).Select(a => new { Cluster = a.Key, Count = a.Count() });
 
             foreach (var ec in emptyCluster)
             {
@@ -135,10 +135,10 @@ namespace _2IMA15_Project_Team9.DataGenerator
                 }
 
                 int newClusterId = distances.IndexOf(distances.Min());
-                if (newClusterId != _normalizedData[i].Cluster_Id)
+                if (newClusterId != _normalizedData[i].Color)
                 {
                     changed = true;
-                    _normalizedData[i].Cluster_Id = _rawData[i].Cluster_Id = newClusterId;
+                    _normalizedData[i].Color = _rawData[i].Color = newClusterId;
                 }
             }
 

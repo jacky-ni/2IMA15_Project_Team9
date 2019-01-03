@@ -79,7 +79,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
                     { new DataPoint(0, 0), new DataPoint(_canvasWidth/2, _canvasHeight/2), new DataPoint(_canvasWidth , _canvasHeight) });
 
             km.Cluster();
-            data.ForEach(x => x.Color = x.Cluster_Id + 1);
+            data.ForEach(x => x.Color = x.Color + 1);
             
             return data;
         }
