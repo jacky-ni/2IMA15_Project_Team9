@@ -16,8 +16,8 @@ namespace _2IMA15_Project_Team9
         private List<DataGenerator.DataPoint> _rawdata = null;
 
         // y = _cutD * x + _cutT
-        private List<float> _cutDs = new List<float>();
-        private List<float> _cutTs = new List<float>();
+        private List<double> _cutDs = new List<double>();
+        private List<double> _cutTs = new List<double>();
         private DataReaderWriter _dataReaderWriter = new DataReaderWriter();
 
         private string _directoryPath = "";
@@ -104,10 +104,52 @@ namespace _2IMA15_Project_Team9
             TwoColorCut tc = new TwoColorCut(set1, set2);
             foreach (var t in tc.Intersections)
             {
-                _cutDs.Add(t.IntersectionPoint.X);
-                _cutTs.Add(-t.IntersectionPoint.Y);
+                _cutDs.Add(t.IntersectionPointX);
+                _cutTs.Add(-t.IntersectionPointY);
             }
             if (_form != null) _form.Refresh();
+
+
+            int up1 = 0, wr1 = 0, bot1 = 0;
+            int up2 = 0, wr2 = 0, bot2 = 0;
+            string msg = "";
+            for (int i = 0; i < _cutDs.Count; i++)
+            {
+                var line = new Line(_cutDs[i], _cutTs[i], 0);
+                foreach (var p in _rawdata)
+                {
+                    double r = OnTopOfLine(p, line);
+
+                    if (Math.Abs(r) > 0 && Math.Abs(r) < 0.1)
+                    {
+                        bool stop = true;
+                    }
+
+                    if (p.Color == 1)
+                    {
+                        if (r > 0) up2++;
+                        else if (r < 0) bot2++;
+                        else wr2++;
+                    }
+                    if (p.Color == 2)
+                    {
+                        if (r > 0) up1++;
+                        else if (r < 0) bot1++;
+                        else wr1++;
+                    }
+                }
+                msg += "1: " + up1 + " points on the top, " + bot1 + " points on the bot, " + wr1 + " points on the line \r\n";
+                msg += "2: " + up2 + " points on the top, " + bot2 + " points on the bot, " + wr2 + " points on the line \r\n\r\n";
+                up1 = 0; wr1 = 0; bot1 = 0;
+                up2 = 0; wr2 = 0; bot2 = 0;
+            }
+
+            MessageBox.Show(msg);
+        }
+
+        private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
+        {
+            return data.Y - (line.D * data.X + line.T);
         }
 
         // Assume odd number of points, if not remove one.
@@ -292,11 +334,11 @@ namespace _2IMA15_Project_Team9
         }
 
         /// <summary>
-        /// TEST CODE
+        /// TEST DATA
         /// </summary>
         private void Test()
         {
-            // Test code.
+            // Test data.
             _rawdata = new List<DataGenerator.DataPoint>();
             var d = new DataGenerator.DataPoint(200, 100);
             d.Color = 1;
