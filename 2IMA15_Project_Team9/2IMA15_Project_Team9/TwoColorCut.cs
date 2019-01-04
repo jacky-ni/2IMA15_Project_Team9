@@ -30,26 +30,6 @@ namespace _2IMA15_Project_Team9
 
         private void Cut(List<LineSegment> seg1, List<LineSegment> seg2)
         {
-            // Check intersection for the first segment.
-            //if (seg1[0].Line.D != seg2[0].Line.D)
-            //{
-            //    var intersec = new Intersection(seg1[0].Line, seg2[0].Line);
-            //    if (intersec.IntersectionPointX <= Math.Min(seg1[0].Endpoint, seg2[0].Endpoint))
-            //    {
-            //        Intersections.Add(new Intersection(seg1[0].Line, seg2[0].Line));
-            //    }
-            //}
-
-            // Check intersection for the last segment.
-            //if (seg1.Last().Line.D != seg2.Last().Line.D)
-            //{
-            //    var intersec = new Intersection(seg1.Last().Line, seg2.Last().Line);
-            //    if (intersec.IntersectionPointX >= Math.Max(seg1.Last().BeginPoint, seg2.Last().BeginPoint))
-            //    {
-            //        Intersections.Add(new Intersection(seg1.Last().Line, seg2.Last().Line));
-            //    }
-            //}
-
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
             {

@@ -9,8 +9,18 @@
         public double Y { get; set; }
 
         // Cluster ID.
-        public int Color { get; set; }
-        
+        private int color;
+        public int Color
+        {
+            get { return color; }
+            set
+            {
+                color = value;
+                ModifiedColor = color;
+            }
+        }
+        public int ModifiedColor { get; set; }
+
         public DataPoint(double x, double y)
         {
             X = x;
@@ -19,7 +29,7 @@
 
         public override string ToString()
         {
-            return "Position: (X: " + X + ", " + "Y: " + Y + "), Color: " + (PointColor)Color;
+            return "Position: (X: " + X + ", " + "Y: " + Y + "), Color: " + (PointColor)color;
         }
     }
 }

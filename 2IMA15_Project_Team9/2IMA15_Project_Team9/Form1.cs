@@ -90,6 +90,10 @@ namespace _2IMA15_Project_Team9
         {
             //Test();
 
+            ThreeColorCut tcc = new ThreeColorCut(_rawdata);
+
+            return;
+
             if (_rawdata == null)
             {
                 MessageBox.Show("Error, No data generated or loaded.");
@@ -97,8 +101,8 @@ namespace _2IMA15_Project_Team9
             }
 
             // TODO:
-            var message = MakeRawDataOddAmount();
-            if (message != "") MessageBox.Show(message);
+            //var message = MakeRawDataOddAmount();
+            //if (message != "") MessageBox.Show(message);
             var set1 = _rawdata.Where(x => x.Color == 1).ToList();
             var set2 = _rawdata.Where(x => x.Color == 2).ToList();
             TwoColorCut tc = new TwoColorCut(set1, set2);
@@ -151,62 +155,7 @@ namespace _2IMA15_Project_Team9
         {
             return data.Y - (line.D * data.X + line.T);
         }
-
-        // Assume odd number of points, if not remove one.
-        private string MakeRawDataOddAmount()
-        {
-            string msg = "";
-            int r = 0, g = 0, b = 0;
-            foreach (var p in _rawdata)
-            {
-                if (p.Color == 1) r++;
-                if (p.Color == 2) g++;
-                if (p.Color == 3) b++;
-            }
-
-            if (r % 2 == 0)
-            {
-                int t = _rawdata.Count;
-                for (int i = 0; i < t; i++)
-                {
-                    if (_rawdata[i].Color == 1)
-                    {
-                        _rawdata.RemoveAt(i);
-                        msg += _rawdata[i].ToString() + " is removed. \r\n";
-                        break;
-                    }
-                }
-            }
-            if (g % 2 == 0)
-            {
-                int t = _rawdata.Count;
-                for (int i = 0; i < t; i++)
-                {
-                    if (_rawdata[i].Color == 2)
-                    {
-                        _rawdata.RemoveAt(i);
-                        msg += _rawdata[i].ToString() + " is removed. \r\n";
-                        break;
-                    }
-                }
-            }
-            if (b % 2 == 0)
-            {
-                int t = _rawdata.Count;
-                for (int i = 0; i < t; i++)
-                {
-                    if (_rawdata[i].Color == 3)
-                    {
-                        _rawdata.RemoveAt(i);
-                        msg += _rawdata[i].ToString() + " is removed. \r\n";
-                        break;
-                    }
-                }
-            }
-
-            return msg;
-        }
-
+        
         private bool Initialize(object sender, EventArgs e)
         {
             if (!Directory.Exists(_directoryPath))
