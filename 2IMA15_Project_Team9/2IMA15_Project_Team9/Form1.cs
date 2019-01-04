@@ -10,10 +10,11 @@ namespace _2IMA15_Project_Team9
     public partial class Form1 : Form
     {
         // For better display.
-        private int _margin = 60;
+        private int _margin = 50;
 
         private Form _form = null;
         private List<DataGenerator.DataPoint> _rawdata = null;
+
         // y = _cutD * x + _cutT
         private List<float> _cutDs = new List<float>();
         private List<float> _cutTs = new List<float>();
@@ -87,6 +88,8 @@ namespace _2IMA15_Project_Team9
 
         private void button6_Click(object sender, EventArgs e)
         {
+            //Test();
+
             if (_rawdata == null)
             {
                 MessageBox.Show("Error, No data generated or loaded.");
@@ -102,9 +105,9 @@ namespace _2IMA15_Project_Team9
             foreach (var t in tc.Intersections)
             {
                 _cutDs.Add(t.IntersectionPoint.X);
-                _cutTs.Add(t.IntersectionPoint.Y);
+                _cutTs.Add(-t.IntersectionPoint.Y);
             }
-            _form.Refresh();
+            if (_form != null) _form.Refresh();
         }
 
         // Assume odd number of points, if not remove one.
@@ -185,17 +188,11 @@ namespace _2IMA15_Project_Team9
             _cutTs.Clear();
             _cutDs.Clear();
 
+            // For better display.
             _form = new Form();
             _form.Height = Convert.ToInt32(textBox1.Text) + _margin;
             _form.Width = Convert.ToInt32(textBox2.Text) + _margin;
             _form.Show();
-
-            // For better display.
-            foreach (var p in _rawdata)
-            {
-                p.X += _margin / 6;
-                p.Y += _margin / 6;
-            }
 
             _form.Paint += _form_Paint;
             _form.FormClosing += _form_FormClosing;
@@ -223,16 +220,17 @@ namespace _2IMA15_Project_Team9
 
         private void _form_Paint(object sender, PaintEventArgs e)
         {
+            var radius = 5;
             foreach (var p in _rawdata)
             {
                 if (p.Color == 1)
-                    e.Graphics.DrawRectangle(Pens.Blue, (float)p.X, (float)p.Y, 1, 1);
+                    e.Graphics.DrawEllipse(Pens.Blue, (float)p.X, (float)p.Y, radius, radius);
                 else if (p.Color == 2)
-                    e.Graphics.DrawRectangle(Pens.Red, (float)p.X, (float)p.Y, 1, 1);
+                    e.Graphics.DrawEllipse(Pens.Red, (float)p.X, (float)p.Y, radius, radius);
                 else if (p.Color == 3)
-                    e.Graphics.DrawRectangle(Pens.Green, (float)p.X, (float)p.Y, 1, 1);
+                    e.Graphics.DrawEllipse(Pens.Green, (float)p.X, (float)p.Y, radius, radius);
                 else
-                    e.Graphics.DrawRectangle(Pens.Black, (float)p.X, (float)p.Y, 1, 1);
+                    e.Graphics.DrawRectangle(Pens.Black, (float)p.X, (float)p.Y, radius, radius);
             }
 
             if (_cutDs.Count != 0 && _cutTs.Count != 0 && _cutDs.Count==_cutTs.Count)
@@ -271,7 +269,7 @@ namespace _2IMA15_Project_Team9
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             if (textBox3.Text == "") return;
-            if (Convert.ToDouble(textBox3.Text) / 6 > Convert.ToDouble(textBox1.Text) * Convert.ToDouble(textBox2.Text))
+            if (Convert.ToDouble(textBox3.Text) > Convert.ToDouble(textBox1.Text) * Convert.ToDouble(textBox2.Text))
             {
                 MessageBox.Show("The amount of points should be less than or equal to canvas width * canvas height!");
                 textBox3.Text = "";
@@ -291,6 +289,60 @@ namespace _2IMA15_Project_Team9
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             _directoryPath = textBox4.Text;
+        }
+
+        /// <summary>
+        /// TEST CODE
+        /// </summary>
+        private void Test()
+        {
+            // Test code.
+            _rawdata = new List<DataGenerator.DataPoint>();
+            var d = new DataGenerator.DataPoint(200, 100);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(300, 200);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(400, 100);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(500, 100);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(600, 100);
+            d.Color = 1;
+            _rawdata.Add(d);
+
+            d = new DataGenerator.DataPoint(100, 300);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(200, 400);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(300, 600);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(200, 300);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(300, 400);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(400, 600);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(300, 300);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(400, 400);
+            d.Color = 2;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(500, 600);
+            d.Color = 2;
+            _rawdata.Add(d);
+
+            openNewForm(@"\testData.txt");
         }
     }
 }

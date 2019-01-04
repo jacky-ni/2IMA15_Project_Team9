@@ -179,7 +179,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
 
         public List<DataPoint> GenerateBestCaseDataset(int n)
         {
-            // For better display.
+            // The clear gap (a horizontal line).
             int margin = 20;
 
             var top = new Dictionary<string, DataPoint>();

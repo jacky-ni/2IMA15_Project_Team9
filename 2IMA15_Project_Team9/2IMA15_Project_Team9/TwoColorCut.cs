@@ -23,20 +23,18 @@ namespace _2IMA15_Project_Team9
 
         private void CalculateCut()
         {
-            //var set1 = _rawdata.Where(x => x.Color == 1).ToList();
-            //var set2 = _rawdata.Where(x => x.Color == 2).ToList();
             var seg1 = CalculateMiddleLine(_rawdata1);
             var seg2 = CalculateMiddleLine(_rawdata2);
-            CheckIntersection(seg1, seg2);
+            Cut(seg1, seg2);
         }
 
-        private void CheckIntersection(List<LineSegment> seg1, List<LineSegment> seg2)
+        private void Cut(List<LineSegment> seg1, List<LineSegment> seg2)
         {
             // Check intersection for the first segment.
             if (seg1[0].Line.D != seg2[0].Line.D)
             {
                 var intersec = new Intersection(seg1[0].Line, seg2[0].Line);
-                if (intersec.IntersectionPoint.X < Math.Max(seg1[0].Endpoint, seg2[0].Endpoint))
+                if (intersec.IntersectionPoint.X <= Math.Min(seg1[0].Endpoint, seg2[0].Endpoint))
                 {
                     Intersections.Add(new Intersection(seg1[0].Line, seg2[0].Line));
                 }
@@ -46,7 +44,7 @@ namespace _2IMA15_Project_Team9
             if (seg1.Last().Line.D != seg2.Last().Line.D)
             {
                 var intersec = new Intersection(seg1.Last().Line, seg2.Last().Line);
-                if (intersec.IntersectionPoint.X < Math.Min(seg1.Last().BeginPoint, seg2.Last().BeginPoint))
+                if (intersec.IntersectionPoint.X >= Math.Max(seg1.Last().BeginPoint, seg2.Last().BeginPoint))
                 {
                     Intersections.Add(new Intersection(seg1.Last().Line, seg2.Last().Line));
                 }
@@ -58,7 +56,7 @@ namespace _2IMA15_Project_Team9
                 for (int j = index; j < seg2.Count; j++)
                 {
                     var intersec = new Intersection(seg1[i].Line, seg2[j].Line);
-                    if (intersec.IntersectionPoint.X >= Math.Min(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
+                    if (intersec.IntersectionPoint.X >= Math.Max(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
                         intersec.IntersectionPoint.X <= Math.Min(seg1[i].Endpoint, seg2[j].Endpoint))
                     {
                         Intersections.Add(new Intersection(seg1[i].Line, seg2[j].Line));
@@ -89,7 +87,7 @@ namespace _2IMA15_Project_Team9
             }
 
             // All intersections.
-            var intersections = GenerateIntersections(lines);
+            var intersections = CalculateIntersections(lines);
 
             // Sweep line, starting with x= left most intersection's x value -1
             float sweepLine = float.MaxValue;
@@ -108,7 +106,7 @@ namespace _2IMA15_Project_Team9
 
             var keys = initialIntersections.Keys.ToList();
             keys.Sort();
-            int ranker = 0;
+            int ranker = 1;
             foreach (var key in keys)
             {
                 Line l = null;
@@ -117,26 +115,31 @@ namespace _2IMA15_Project_Team9
                 ranker += 1;
             }
 
-            var line = lines.Find(x => x.Rank == lines.Count / 2);
+            var line = lines.Find(x => x.Rank == lines.Count / 2 + 1);
             segments.Add(new LineSegment(line, float.MinValue, intersections[0].IntersectionPoint.X));
-            for (int i = 1; i < intersections.Count; i++)
+            for (int i = 0; i < intersections.Count; i++)
             {
                 var temp = intersections[i].Line1.Rank;
                 intersections[i].Line1.Rank = intersections[i].Line2.Rank;
                 intersections[i].Line2.Rank = temp;
 
-                var l = lines.Find(x => x.Rank == lines.Count / 2);
+                var l = lines.Find(x => x.Rank == lines.Count / 2 + 1);
                 if (segments.Last().Line != l)
-                    segments.Add(new LineSegment(l, intersections[i - 1].IntersectionPoint.X, intersections[i].IntersectionPoint.X));
-                else
-                    segments.Last().Endpoint = intersections[i].IntersectionPoint.X;
+                {
+                    if (segments.Last() != null)
+                    {
+                        segments.Last().Endpoint = intersections[i].IntersectionPoint.X;
+                    }
+                    segments.Add(new LineSegment(l, intersections[i].IntersectionPoint.X, intersections[i].IntersectionPoint.X));
+                }
             }
             segments.Last().Endpoint = float.MaxValue;
+            segments.RemoveAll(x => x.BeginPoint == x.Endpoint);
 
             return segments;
         }
 
-        private List<Intersection> GenerateIntersections(List<Line> lines)
+        private List<Intersection> CalculateIntersections(List<Line> lines)
         {
             var intersections = new List<Intersection>();
 
