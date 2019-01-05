@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _2IMA15_Project_Team9
 {
@@ -23,12 +20,12 @@ namespace _2IMA15_Project_Team9
 
         private void CalculateCut()
         {
-            var seg1 = CalculateMiddleLine(_rawdata1);
-            var seg2 = CalculateMiddleLine(_rawdata2);
-            Cut(seg1, seg2);
+            var seg1 = CalculateMiddleLineSegs(_rawdata1);
+            var seg2 = CalculateMiddleLineSegs(_rawdata2);
+            CalculateIntersection(seg1, seg2);
         }
 
-        private void Cut(List<LineSegment> seg1, List<LineSegment> seg2)
+        private void CalculateIntersection(List<LineSegment> seg1, List<LineSegment> seg2)
         {
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
@@ -36,8 +33,8 @@ namespace _2IMA15_Project_Team9
                 for (int j = index; j < seg2.Count; j++)
                 {
                     var intersec = new Intersection(seg1[i].Line, seg2[j].Line);
-                    if (intersec.IntersectionPointX >= Math.Max(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
-                        intersec.IntersectionPointX <= Math.Min(seg1[i].Endpoint, seg2[j].Endpoint))
+                    if (intersec.IntersectionPointX > Math.Max(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
+                        intersec.IntersectionPointX < Math.Min(seg1[i].Endpoint, seg2[j].Endpoint))
                     {
                         Intersections.Add(new Intersection(seg1[i].Line, seg2[j].Line));
                     }
@@ -53,8 +50,8 @@ namespace _2IMA15_Project_Team9
             }
         }
 
-        // Generate the middle line segments
-        private List<LineSegment> CalculateMiddleLine(List<DataGenerator.DataPoint> data)
+        // Calculate the middle line segments
+        private List<LineSegment> CalculateMiddleLineSegs(List<DataGenerator.DataPoint> data)
         {
             var segments = new List<LineSegment>();
 

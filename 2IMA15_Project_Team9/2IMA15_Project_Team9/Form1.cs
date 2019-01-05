@@ -16,8 +16,8 @@ namespace _2IMA15_Project_Team9
         private List<DataGenerator.DataPoint> _rawdata = null;
 
         // y = _cutD * x + _cutT
-        private List<double> _cutDs = new List<double>();
-        private List<double> _cutTs = new List<double>();
+        private double _cutD = 0;
+        private double _cutT = 0;
         private DataReaderWriter _dataReaderWriter = new DataReaderWriter();
 
         private string _directoryPath = "";
@@ -90,65 +90,25 @@ namespace _2IMA15_Project_Team9
         {
             //Test();
 
-            ThreeColorCut tcc = new ThreeColorCut(_rawdata);
-
-            return;
-
             if (_rawdata == null)
             {
                 MessageBox.Show("Error, No data generated or loaded.");
                 return;
             }
 
-            // TODO:
-            //var message = MakeRawDataOddAmount();
-            //if (message != "") MessageBox.Show(message);
-            var set1 = _rawdata.Where(x => x.Color == 1).ToList();
-            var set2 = _rawdata.Where(x => x.Color == 2).ToList();
-            TwoColorCut tc = new TwoColorCut(set1, set2);
-            foreach (var t in tc.Intersections)
+            ThreeColorCut tcc = new ThreeColorCut(_rawdata);
+            _rawdata = tcc.RawData;
+
+            if (tcc.Message != null && tcc.Message != "")
             {
-                _cutDs.Add(t.IntersectionPointX);
-                _cutTs.Add(-t.IntersectionPointY);
-            }
-            if (_form != null) _form.Refresh();
-
-
-            int up1 = 0, wr1 = 0, bot1 = 0;
-            int up2 = 0, wr2 = 0, bot2 = 0;
-            string msg = "";
-            for (int i = 0; i < _cutDs.Count; i++)
-            {
-                var line = new Line(_cutDs[i], _cutTs[i], 0);
-                foreach (var p in _rawdata)
-                {
-                    double r = OnTopOfLine(p, line);
-
-                    if (Math.Abs(r) > 0 && Math.Abs(r) < 0.1)
-                    {
-                        bool stop = true;
-                    }
-
-                    if (p.Color == 1)
-                    {
-                        if (r > 0) up2++;
-                        else if (r < 0) bot2++;
-                        else wr2++;
-                    }
-                    if (p.Color == 2)
-                    {
-                        if (r > 0) up1++;
-                        else if (r < 0) bot1++;
-                        else wr1++;
-                    }
-                }
-                msg += "1: " + up1 + " points on the top, " + bot1 + " points on the bot, " + wr1 + " points on the line \r\n";
-                msg += "2: " + up2 + " points on the top, " + bot2 + " points on the bot, " + wr2 + " points on the line \r\n\r\n";
-                up1 = 0; wr1 = 0; bot1 = 0;
-                up2 = 0; wr2 = 0; bot2 = 0;
+                lbinfo.Text = "Information: \r\n" + tcc.Message;
             }
 
-            MessageBox.Show(msg);
+            _cutD = tcc.CutD;
+            _cutT = tcc.CutT;
+
+            _form.Refresh();
+            button6.Enabled = false;
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
@@ -176,8 +136,8 @@ namespace _2IMA15_Project_Team9
 
         private void openNewForm(string fileName)
         {
-            _cutTs.Clear();
-            _cutDs.Clear();
+            _cutT = 0;
+            _cutD = 0;
 
             // For better display.
             _form = new Form();
@@ -207,6 +167,7 @@ namespace _2IMA15_Project_Team9
             button3.Enabled = true;
             button4.Enabled = true;
             button5.Enabled = true;
+            button6.Enabled = true;
         }
 
         private void _form_Paint(object sender, PaintEventArgs e)
@@ -223,13 +184,9 @@ namespace _2IMA15_Project_Team9
                 else
                     e.Graphics.DrawRectangle(Pens.Black, (float)p.X, (float)p.Y, radius, radius);
             }
-
-            if (_cutDs.Count != 0 && _cutTs.Count != 0 && _cutDs.Count==_cutTs.Count)
+            if (_cutT != 0 && _cutD != 0)
             {
-                for (int i = 0; i < _cutDs.Count; i++)
-                {
-                    e.Graphics.DrawLine(Pens.Black, new Point(0, (int)_cutTs[i]), new Point(_form.Width, (int)(_form.Width * _cutDs[i] + _cutTs[i])));
-                }
+                e.Graphics.DrawLine(Pens.Black, new PointF(0, (float)_cutT), new PointF(_form.Width, (float)(_form.Width * _cutD + _cutT)));
             }
         }
 
@@ -295,13 +252,25 @@ namespace _2IMA15_Project_Team9
             d = new DataGenerator.DataPoint(300, 200);
             d.Color = 1;
             _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(400, 100);
+            d = new DataGenerator.DataPoint(400, 200);
             d.Color = 1;
             _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(500, 100);
+            d = new DataGenerator.DataPoint(500, 300);
             d.Color = 1;
             _rawdata.Add(d);
             d = new DataGenerator.DataPoint(600, 100);
+            d.Color = 1;
+            _rawdata.Add(d); 
+            d = new DataGenerator.DataPoint(700, 300);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(800, 400);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(900, 500);
+            d.Color = 1;
+            _rawdata.Add(d);
+            d = new DataGenerator.DataPoint(1000, 600);
             d.Color = 1;
             _rawdata.Add(d);
 
