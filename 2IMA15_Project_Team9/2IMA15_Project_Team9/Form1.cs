@@ -161,7 +161,7 @@ namespace _2IMA15_Project_Team9
         {
             _form = null;
             _rawdata = null;
-            
+            lbinfo.Text = "";
             button1.Enabled = true;
             button2.Enabled = true;
             button3.Enabled = true;

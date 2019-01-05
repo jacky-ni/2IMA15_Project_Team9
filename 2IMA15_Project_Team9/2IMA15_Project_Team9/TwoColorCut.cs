@@ -9,12 +9,15 @@ namespace _2IMA15_Project_Team9
         private List<DataGenerator.DataPoint> _rawdata1 = null;
         private List<DataGenerator.DataPoint> _rawdata2 = null;
         public List<Intersection> Intersections { get; private set; }
+        
+        private List<DataGenerator.DataPoint> _modifiedColorData = null;
 
         public TwoColorCut(List<DataGenerator.DataPoint> rawdata1, List<DataGenerator.DataPoint> rawdata2)
         {
             Intersections = new List<Intersection>();
             _rawdata1 = rawdata1;
             _rawdata2 = rawdata2;
+            _modifiedColorData = _rawdata1.Where(x => x.Color != x.ModifiedColor).Union(_rawdata2.Where(y => y.Color != y.ModifiedColor)).ToList();
             CalculateCut();
         }
 
@@ -36,7 +39,17 @@ namespace _2IMA15_Project_Team9
                     if (intersec.IntersectionPointX > Math.Max(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
                         intersec.IntersectionPointX < Math.Min(seg1[i].Endpoint, seg2[j].Endpoint))
                     {
+                        // We do not use auxiliary points (points whose color are changed) as the intersection line
+                        // Because this will effect the later swaps
+                        //if (_modifiedColorData.Where(x => (x.X == seg1[i].Line.D && x.Y == -seg1[i].Line.T) ||
+                        //     (x.X == seg2[i].Line.D && x.Y == -seg2[i].Line.T)).ToList().Count == 0)
+                        //{
                         Intersections.Add(new Intersection(seg1[i].Line, seg2[j].Line));
+                        //}
+                        //else
+                        //{
+                        //    bool stop = true;
+                        //}
                     }
                     if (seg1[i].Endpoint >= seg2[j].Endpoint)
                     {
