@@ -46,8 +46,13 @@ namespace _2IMA15_Project_Team9.DataGenerator
                 }
                 dic.Add(j + "," + k, new DataPoint(xs[j], ys[k]));
             }
-            ColorVertices(dic.Values.ToList());
-            return dic.Values.ToList();
+            var res = dic.Values.ToList();
+            ColorVertices(res);
+            for (int i = 0; i < res.Count; i++)
+            {
+                res[i].ID = i + 1;
+            }
+            return res;
         }
         
         private void ColorVertices(List<DataPoint> vertices)
@@ -80,7 +85,10 @@ namespace _2IMA15_Project_Team9.DataGenerator
 
             km.Cluster();
             data.ForEach(x => x.Color = x.Color + 1);
-            
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i].ID = i + 1;
+            }
             return data;
         }
         
@@ -173,8 +181,12 @@ namespace _2IMA15_Project_Team9.DataGenerator
             {
                 p.Color = 3;
             }
-
-            return left_top.Values.Union(right_top.Values.Union(bot_middle.Values)).ToList();
+            var data = left_top.Values.Union(right_top.Values.Union(bot_middle.Values)).ToList();
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i].ID = i + 1;
+            }
+            return data;
         }
 
         public List<DataPoint> GenerateBestCaseDataset(int n)
@@ -237,8 +249,12 @@ namespace _2IMA15_Project_Team9.DataGenerator
                 top.Values.ToList()[i].Color = i % 3 + 1;
                 bot.Values.ToList()[i].Color = i % 3 + 1;
             }
-
-            return top.Values.Union(bot.Values).ToList();
+            var data = top.Values.Union(bot.Values).ToList();
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i].ID = i + 1;
+            }
+            return data;
         }
 
     }

@@ -23,6 +23,8 @@ namespace _2IMA15_Project_Team9
         // y = CutD * x + CutT
         public double CutD { get; private set; }
         public double CutT { get; private set; }
+        public List<DataGenerator.DataPoint> OnLines { get; set; }
+
         public List<Swap> Swaps { get; private set; }
         public string Message { get; private set; }
 
@@ -64,9 +66,11 @@ namespace _2IMA15_Project_Team9
             }
 
             TwoColorCut tc = new TwoColorCut(set1, set2);
+
             // y = _cutD * x + _cutT
             List<double> cutDs = new List<double>();
             List<double> cutTs = new List<double>();
+
             foreach (var t in tc.Intersections)
             {
                 cutDs.Add(t.IntersectionPointX);
@@ -147,6 +151,7 @@ namespace _2IMA15_Project_Team9
                         CutD = cutDs[i];
                         CutT = cutTs[i];
                         Swaps = swaps;
+                        OnLines = ols;
                     }
                 }
             }

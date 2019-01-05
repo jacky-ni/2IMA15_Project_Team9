@@ -11,7 +11,7 @@ namespace _2IMA15_Project_Team9
     {
         // For better display.
         private int _margin = 50;
-
+        private string _fileName = "";
         private Form _form = null;
         private List<DataGenerator.DataPoint> _rawdata = null;
 
@@ -29,93 +29,142 @@ namespace _2IMA15_Project_Team9
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string fileName = @"\GeneralCaseDataset.txt";
-            if (!Initialize(sender, e)) return;
+            try
+            {
+                _fileName = @"\GeneralCaseDataset";
+                if (!Initialize(sender, e)) return;
 
-            DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateGeneralCaseDataset(Convert.ToInt32(textBox3.Text));
+                DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                _rawdata = dg.GenerateGeneralCaseDataset(Convert.ToInt32(textBox3.Text));
 
-            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + fileName);
-            openNewForm(fileName);
+                _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
+                openNewForm(_fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.Message);
+            }
         }
-
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string fileName = @"\GeneralBadCaseDataset.txt";
-            if (!Initialize(sender, e)) return;
+            try
+            {
+                _fileName = @"\GeneralBadCaseDataset";
+                if (!Initialize(sender, e)) return;
 
-            DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateGeneralBadCaseDataset(Convert.ToInt32(textBox3.Text), 3);
+                DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                _rawdata = dg.GenerateGeneralBadCaseDataset(Convert.ToInt32(textBox3.Text), 3);
 
-            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + fileName);
-            openNewForm(fileName);
+                _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
+                openNewForm(_fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.Message);
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string fileName = @"\BestCaseDataset.txt";
-            if (!Initialize(sender, e)) return;
+            try
+            {
+                _fileName = @"\BestCaseDataset";
+                if (!Initialize(sender, e)) return;
 
-            DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateBestCaseDataset(Convert.ToInt32(textBox3.Text));
+                DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                _rawdata = dg.GenerateBestCaseDataset(Convert.ToInt32(textBox3.Text));
 
-            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + fileName);
-            openNewForm(fileName);
+                _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
+                openNewForm(_fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.Message);
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string fileName = @"\WorstCaseDataset.txt";
-            if (!Initialize(sender, e)) return;
+            try
+            {
+                _fileName = @"\WorstCaseDataset";
+                if (!Initialize(sender, e)) return;
 
-            DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            _rawdata = dg.GenerateWorstCaseDataset(Convert.ToInt32(textBox3.Text));
+                DataGenerator.DataGenerator dg = new DataGenerator.DataGenerator(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                _rawdata = dg.GenerateWorstCaseDataset(Convert.ToInt32(textBox3.Text));
 
-            _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + fileName);
-            openNewForm(fileName);
+                _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
+                openNewForm(_fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.Source);
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == DialogResult.OK)
+            try
             {
-                _rawdata = _dataReaderWriter.ReadRawData(ofd.FileName);
-                openNewForm(ofd.FileName);
+                OpenFileDialog ofd = new OpenFileDialog();
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    _rawdata = _dataReaderWriter.ReadRawData(ofd.FileName);
+                    openNewForm(ofd.FileName);
+                    textBox4.Text = Path.GetDirectoryName((ofd.FileName));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error, selected file is invalid.");
             }
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            //Test();
-
-            if (_rawdata == null)
+            try
             {
-                MessageBox.Show("Error, No data generated or loaded.");
-                return;
+                //Test();
+
+                if (_rawdata == null)
+                {
+                    MessageBox.Show("Error, No data generated or loaded.");
+                    return;
+                }
+                if (!Directory.Exists(_directoryPath))
+                {
+                    MessageBox.Show("Error, selected directory does not exist.");
+                    return;
+                }
+
+                ThreeColorCut tcc = new ThreeColorCut(_rawdata);
+                _rawdata = tcc.RawData;
+
+                if (tcc.Message != null && tcc.Message != "")
+                {
+                    lbinfo.Text = "Information: \r\n" + tcc.Message;
+                }
+
+                _cutD = tcc.CutD;
+                _cutT = tcc.CutT;
+                _form.Refresh();
+
+                _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + _fileName + "Cut.txt");
+
+                button6.Enabled = false;
             }
-
-            ThreeColorCut tcc = new ThreeColorCut(_rawdata);
-            _rawdata = tcc.RawData;
-
-            if (tcc.Message != null && tcc.Message != "")
+            catch (Exception ex)
             {
-                lbinfo.Text = "Information: \r\n" + tcc.Message;
+                MessageBox.Show(ex.Source + " " + ex.Message);
             }
-
-            _cutD = tcc.CutD;
-            _cutT = tcc.CutT;
-
-            _form.Refresh();
-            button6.Enabled = false;
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
         {
             return data.Y - (line.D * data.X + line.T);
         }
-        
+
         private bool Initialize(object sender, EventArgs e)
         {
             if (!Directory.Exists(_directoryPath))
@@ -260,7 +309,7 @@ namespace _2IMA15_Project_Team9
             _rawdata.Add(d);
             d = new DataGenerator.DataPoint(600, 100);
             d.Color = 1;
-            _rawdata.Add(d); 
+            _rawdata.Add(d);
             d = new DataGenerator.DataPoint(700, 300);
             d.Color = 1;
             _rawdata.Add(d);

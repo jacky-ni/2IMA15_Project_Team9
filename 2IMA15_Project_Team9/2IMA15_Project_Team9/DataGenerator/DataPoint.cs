@@ -4,6 +4,8 @@
 
     class DataPoint
     {
+        public int ID { get; set; }
+
         // Location of the data points.
         public double X { get; set; }
         public double Y { get; set; }
