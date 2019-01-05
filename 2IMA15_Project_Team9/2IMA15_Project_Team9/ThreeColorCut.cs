@@ -139,12 +139,12 @@ namespace _2IMA15_Project_Team9
                         Swaps = swaps;
                     }
                 }
+            }
 
-                Message += "\r\nThere are in total " + Swaps.Count + " swaps: \r\n";
-                foreach (var sw in Swaps)
-                {
-                    Message += sw.ToString();
-                }
+            Message += "\r\nThere are in total " + Swaps.Count + " swaps: \r\n";
+            foreach (var sw in Swaps)
+            {
+                Message += sw.ToString();
             }
         }
 
@@ -251,24 +251,24 @@ namespace _2IMA15_Project_Team9
             
             if (set1.Count <= set2.Count && set1.Count <= set3.Count)
             {
-                ChangeColor(set1, GetCenterPoint(set1), 2, 3);
-                Message +=  MakeRawDataEvenAmount(set1);
+                Message += MakeRawDataEvenAmount(set1);
                 Message += MakeRawDataOddAmount(set2);
                 Message += MakeRawDataOddAmount(set3);
+                ChangeColor(set1, GetCenterPoint(set1), 2, 3);
             }
             else if (set2.Count <= set1.Count && set2.Count <= set3.Count)
             {
-                ChangeColor(set2, GetCenterPoint(set2), 1, 3);
                 Message += MakeRawDataEvenAmount(set2);
                 Message += MakeRawDataOddAmount(set1);
                 Message += MakeRawDataOddAmount(set3);
+                ChangeColor(set2, GetCenterPoint(set2), 1, 3);
             }
             else if (set3.Count <= set1.Count && set3.Count <= set2.Count)
             {
-                ChangeColor(set3, GetCenterPoint(set3), 1, 2);
                 Message += MakeRawDataEvenAmount(set3);
                 Message += MakeRawDataOddAmount(set1);
                 Message += MakeRawDataOddAmount(set2);
+                ChangeColor(set3, GetCenterPoint(set3), 1, 2);
             }
 
             _rawdata.Clear();
@@ -305,7 +305,6 @@ namespace _2IMA15_Project_Team9
                 distanceDic.TryGetValue(key, out data);
                 foreach (var d in data)
                 {
-                    counter++;
                     if (counter < rawdata.Count / 2)
                     {
                         d.ModifiedColor = color1;
@@ -314,6 +313,7 @@ namespace _2IMA15_Project_Team9
                     {
                         d.ModifiedColor = color2;
                     }
+                    counter++;
                 }
             }
         }
