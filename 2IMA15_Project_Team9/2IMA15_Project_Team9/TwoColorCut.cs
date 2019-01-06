@@ -40,7 +40,7 @@ namespace _2IMA15_Project_Team9
                     }
                     if (seg1[i].Endpoint >= seg2[j].Endpoint)
                     {
-                        index++;
+                        index += 1;
                     }
                     else
                     {
@@ -146,6 +146,7 @@ namespace _2IMA15_Project_Team9
                     segments.Add(new LineSegment(l, intersections[i].IntersectionPointX, intersections[i].IntersectionPointX));
                 }
             }
+            
             segments.Last().Endpoint = double.MaxValue;
             segments.RemoveAll(x => x.BeginPoint == x.Endpoint);
 

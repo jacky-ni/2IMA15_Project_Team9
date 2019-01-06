@@ -96,7 +96,7 @@ namespace _2IMA15_Project_Team9
         private void button6_Click(object sender, EventArgs e)
         {
             //Test();
-            //return;
+
             if (_rawdata == null)
             {
                 MessageBox.Show("Error, No data generated or loaded.");
