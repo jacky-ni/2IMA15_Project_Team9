@@ -16,13 +16,19 @@ namespace _2IMA15_Project_Team9
 
         // Minimum points required for each color.
         //private int _minimumT = 2;
-
-        private List<DataGenerator.DataPoint> _rawdata = null;
-        public List<DataGenerator.DataPoint> RawData { get { return _rawdata; } }
+        
+        private List<DataGenerator.DataPoint> _rawData = null;
+        private List<DataGenerator.DataPoint> _rawDataBackUp = null;
+        public List<DataGenerator.DataPoint> RawDataBackUp { get { return _rawDataBackUp; } }
+        public List<DataGenerator.DataPoint> RawData { get { return _rawData; } }
 
         // y = CutD * x + CutT
         public double CutD { get; private set; }
         public double CutT { get; private set; }
+
+        private List<double> cutDs = new List<double>();
+        private List<double> cutTs = new List<double>();
+
         public List<DataGenerator.DataPoint> OnLines { get; set; }
 
         public List<Swap> Swaps { get; private set; }
@@ -31,17 +37,24 @@ namespace _2IMA15_Project_Team9
         public ThreeColorCut(List<DataGenerator.DataPoint> rawdata)
         {
             Swaps = new List<Swap>();
-            _rawdata = rawdata;
+            _rawData = rawdata;
+            _rawDataBackUp = new List<DataGenerator.DataPoint>();
+            _rawData.ForEach(x =>
+            {
+                _rawDataBackUp.Add((DataGenerator.DataPoint)x.Clone());
+            });
+
             //CheckDataValidation();
             ModifyColor();
             CalculateCut();
+            DisplayInformation();
         }
 
         private void CheckDataValidation()
         {
-            var set1 = _rawdata.Where(x => x.Color == 1).ToList();
-            var set2 = _rawdata.Where(x => x.Color == 2).ToList();
-            var set3 = _rawdata.Where(x => x.Color == 3).ToList();
+            var set1 = _rawData.Where(x => x.Color == 1).ToList();
+            var set2 = _rawData.Where(x => x.Color == 2).ToList();
+            var set3 = _rawData.Where(x => x.Color == 3).ToList();
 
             //if (set1.Count < _minimumT || set2.Count < _minimumT || set3.Count < _minimumT)
             //    throw new Exception("ThreeCutAlg: Insufficient fata.");
@@ -49,48 +62,48 @@ namespace _2IMA15_Project_Team9
 
         private void CalculateCut()
         {
-            var set1 = _rawdata.Where(x => x.ModifiedColor == 1).ToList();
+            var set1 = _rawData.Where(x => x.ModifiedColor == 1).ToList();
             var set2 = new List<DataGenerator.DataPoint>();
             if (set1.Count == 0)
             {
-                set1 = _rawdata.Where(x => x.ModifiedColor == 2).ToList();
-                set2 = _rawdata.Where(x => x.ModifiedColor == 3).ToList();
+                set1 = _rawData.Where(x => x.ModifiedColor == 2).ToList();
+                set2 = _rawData.Where(x => x.ModifiedColor == 3).ToList();
             }
             else
             {
-                set2 = _rawdata.Where(x => x.ModifiedColor == 2).ToList();
+                set2 = _rawData.Where(x => x.ModifiedColor == 2).ToList();
                 if (set2.Count == 0)
                 {
-                    set2 = _rawdata.Where(x => x.ModifiedColor == 3).ToList();
+                    set2 = _rawData.Where(x => x.ModifiedColor == 3).ToList();
                 }
             }
 
             TwoColorCut tc = new TwoColorCut(set1, set2);
-
-            // y = _cutD * x + _cutT
-            List<double> cutDs = new List<double>();
-            List<double> cutTs = new List<double>();
 
             foreach (var t in tc.Intersections)
             {
                 cutDs.Add(t.IntersectionPointX);
                 cutTs.Add(-t.IntersectionPointY);
             }
-            
+
             // To be removed
             string msgtoShow = "";
 
+            var ups = new List<DataGenerator.DataPoint>();
+            var bots = new List<DataGenerator.DataPoint>();
+            var ols = new List<DataGenerator.DataPoint>();
+
             for (int i = 0; i < cutDs.Count; i++)
             {
-                var ups = new List<DataGenerator.DataPoint>();
-                var bots = new List<DataGenerator.DataPoint>();
-                var ols = new List<DataGenerator.DataPoint>();
+                ups.Clear();
+                bots.Clear();
+                ols.Clear();
 
                 int up1 = 0, ol1 = 0, bot1 = 0;
                 int up2 = 0, ol2 = 0, bot2 = 0;
-                
+
                 var line = new Line(cutDs[i], cutTs[i], 0);
-                foreach (var p in _rawdata)
+                foreach (var p in _rawData)
                 {
                     double r = OnTopOfLine(p, line);
 
@@ -99,7 +112,7 @@ namespace _2IMA15_Project_Team9
                     {
                         r = 0;
                     }
-                    
+
                     if (p.ModifiedColor == set1.First().ModifiedColor)
                     {
                         if (r > 0)
@@ -156,7 +169,71 @@ namespace _2IMA15_Project_Team9
                 }
             }
 
-            Message += msgtoShow;
+            //Message += msgtoShow;
+
+            Message += "\r\nThose two points is the cut.\r\n";
+            foreach (var l in ols)
+            {
+                Message += l.ToString() + "\r\n";
+            }
+        }
+
+        private void DisplayInformation()
+        {
+            int rups = 0, rbots = 0, bups = 0, bbots = 0, gups = 0, gbots = 0;
+            var teline = new Line(CutD, CutT, 0);
+            
+            foreach (var d in _rawData)
+            {
+                double r = OnTopOfLine(d, teline);
+                // This is where the error happens.
+                if (Math.Abs(r) < _errorT)
+                {
+                    r = 0;
+                }
+
+                if (d.Color == 1)
+                {
+                    if (r > 0)
+                    {
+                        rups++;
+                    }
+                    else if (r < 0)
+                    {
+                        rbots++;
+                    }
+                }
+                else if (d.Color == 2)
+                {
+                    if (r > 0)
+                    {
+                        bups++;
+                    }
+                    else if (r < 0)
+                    {
+                        bbots++;
+                    }
+                }
+                else if (d.Color == 3)
+                {
+                    if (r > 0)
+                    {
+                        gups++;
+                    }
+                    else if (r < 0)
+                    {
+                        gbots++;
+                    }
+                }
+            }
+
+            Message += "Number of Red points in one side: " + rups +
+                "\r\nNumber of Red points in another side: " + rbots +
+                "\r\nNumber of Blue points in one side: " + bups +
+                "\r\nNumber of Blue points in another side: " + bbots +
+                "\r\nNumber of Green points in one side: " + gups +
+                "\r\nNumber of Green points in another side: " + gbots + "\r\n";
+            
             Message += "\r\nThere are in total " + Swaps.Count + " swaps: \r\n";
             foreach (var sw in Swaps)
             {
@@ -197,29 +274,37 @@ namespace _2IMA15_Project_Team9
                 if (tu.Count % 2 != 0)
                 {
                     shad = ups.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
+                    ups.Remove(shad);
+                    ups.Add(_modifiedColorData[0]);
                 }
                 if (tb.Count % 2 != 0)
                 {
                     shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
+                    bots.Remove(shad);
+                    bots.Add(_modifiedColorData[0]);
                 }
-                shad.Color = _modifiedColorData[0].Color;
-                shad.ModifiedColor = _modifiedColorData[0].ModifiedColor;
-                _modifiedColorData[0].Color = _modifiedColorData[0].ModifiedColor;
-                swaps.Add(new Swap(_modifiedColorData[0], shad));
+                //shad.Color = _modifiedColorData[0].Color;
+                //shad.ModifiedColor = _modifiedColorData[0].ModifiedColor;
+                //_modifiedColorData[0].Color = _modifiedColorData[0].ModifiedColor;
+                ols.Remove(_modifiedColorData[0]);
+                ols.Add(shad);
+                swaps.Add(new Swap(_modifiedColorData[0], shad, _rawData));
             }
             if (_modifiedColorData.Count == 2)
             {
                 shad = ups.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
-                shad.Color = _modifiedColorData[0].Color;
-                shad.ModifiedColor = _modifiedColorData[0].ModifiedColor;
-                _modifiedColorData[0].Color = _modifiedColorData[0].ModifiedColor;
-                swaps.Add(new Swap(_modifiedColorData[0], shad));
+                swaps.Add(new Swap(_modifiedColorData[0], shad, _rawData));
+                ups.Remove(shad);
+                ups.Add(_modifiedColorData[0]);
+                ols.Remove(_modifiedColorData[0]);
+                ols.Add(shad);
 
-                shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[1].ModifiedColor).First();
-                shad.Color = _modifiedColorData[1].Color;
-                shad.ModifiedColor = _modifiedColorData[1].ModifiedColor;
-                _modifiedColorData[1].Color = _modifiedColorData[1].ModifiedColor;
-                swaps.Add(new Swap(_modifiedColorData[1], shad));
+                shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
+                swaps.Add(new Swap(_modifiedColorData[1], shad, _rawData));
+                bots.Remove(shad);
+                bots.Add(_modifiedColorData[1]);
+                ols.Remove(_modifiedColorData[1]);
+                ols.Add(shad);
             }
 
             #endregion
@@ -272,7 +357,7 @@ namespace _2IMA15_Project_Team9
             }
             for (int i = 0; i < differ / 2; i++)
             {
-                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
+                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i], _rawData);
                 swaps.Add(swap);
             }
 
@@ -298,11 +383,16 @@ namespace _2IMA15_Project_Team9
             }
             for (int i = 0; i < differ / 2; i++)
             {
-                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
+                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i], _rawData);
                 swaps.Add(swap);
             }
 
             return swaps;
+        }
+
+        private void SwitchTwoPoints()
+        {
+
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
@@ -314,9 +404,9 @@ namespace _2IMA15_Project_Team9
         {
             Message += "\r\nThe Following points are removed: \r\n";
 
-            var set1 = _rawdata.Where(x => x.Color == 1).ToList();
-            var set2 = _rawdata.Where(x => x.Color == 2).ToList();
-            var set3 = _rawdata.Where(x => x.Color == 3).ToList();
+            var set1 = _rawData.Where(x => x.Color == 1).ToList();
+            var set2 = _rawData.Where(x => x.Color == 2).ToList();
+            var set3 = _rawData.Where(x => x.Color == 3).ToList();
 
             if (set1.Count <= set2.Count && set1.Count <= set3.Count)
             {
@@ -349,8 +439,8 @@ namespace _2IMA15_Project_Team9
                     Message += MakeRawDataOddAmount(set2);
             }
 
-            _rawdata.Clear();
-            _rawdata = set1.Union(set2.Union(set3)).ToList();
+            _rawData.Clear();
+            _rawData = set1.Union(set2.Union(set3)).ToList();
         }
 
         private void ChangeColor(List<DataGenerator.DataPoint> rawdata, List<double> centerPoint, int color1, int color2)
@@ -443,10 +533,19 @@ namespace _2IMA15_Project_Team9
         public DataGenerator.DataPoint PointA { get;private set; }
         public DataGenerator.DataPoint PointB { get;private set; }
 
-        public Swap(DataGenerator.DataPoint a, DataGenerator.DataPoint b)
+        public Swap(DataGenerator.DataPoint ina, DataGenerator.DataPoint inb, List<DataGenerator.DataPoint> rawdata)
         {
-            PointA = a;
-            PointB = b;
+            PointA = ina;
+            PointB = inb;
+
+            var a = rawdata.Find(x => x.ID == PointA.ID);
+            var b = rawdata.Find(x => x.ID == PointB.ID);
+            var tax = a.X;
+            var tay = a.Y;
+            a.X = b.X;
+            a.Y = b.Y;
+            b.X = tax;
+            b.Y = tay;
         }
 
         public override string ToString()

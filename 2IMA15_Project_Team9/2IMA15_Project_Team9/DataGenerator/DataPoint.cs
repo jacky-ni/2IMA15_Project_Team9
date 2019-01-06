@@ -1,8 +1,10 @@
-﻿namespace _2IMA15_Project_Team9.DataGenerator
+﻿using System;
+
+namespace _2IMA15_Project_Team9.DataGenerator
 {
     enum PointColor : int { Blue = 1, Red = 2, Green = 3 }
 
-    class DataPoint
+    class DataPoint : ICloneable
     {
         public int ID { get; set; }
 
@@ -32,6 +34,13 @@
         public override string ToString()
         {
             return "Position: (X: " + X + ", " + "Y: " + Y + "), Color: " + (PointColor)color;
+        }
+
+        public object Clone()
+        {
+            var p = new DataPoint(X, Y);
+            p.Color = color;
+            return p;
         }
     }
 }

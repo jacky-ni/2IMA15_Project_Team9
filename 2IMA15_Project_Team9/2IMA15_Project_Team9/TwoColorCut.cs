@@ -25,10 +25,10 @@ namespace _2IMA15_Project_Team9
         {
             var seg1 = CalculateMiddleLineSegs(_rawdata1);
             var seg2 = CalculateMiddleLineSegs(_rawdata2);
-            CalculateIntersection(seg1, seg2);
+            CalculateIntersectionBetweenSegs(seg1, seg2);
         }
 
-        private void CalculateIntersection(List<LineSegment> seg1, List<LineSegment> seg2)
+        private void CalculateIntersectionBetweenSegs(List<LineSegment> seg1, List<LineSegment> seg2)
         {
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
@@ -76,7 +76,8 @@ namespace _2IMA15_Project_Team9
 
             // All intersections.
             var intersections = CalculateIntersections(lines);
-
+            intersections = intersections.OrderBy(x => x.IntersectionPointX).ThenBy(y => y.IntersectionPointY).ToList();
+            
             // Sweep line, starting with x= left most intersection's x value -1
             double sweepLine = double.MaxValue;
             foreach (var intersec in intersections)
@@ -107,9 +108,43 @@ namespace _2IMA15_Project_Team9
             segments.Add(new LineSegment(line, double.MinValue, intersections[0].IntersectionPointX));
             for (int i = 0; i < intersections.Count; i++)
             {
-                var temp = intersections[i].Line1.Rank;
-                intersections[i].Line1.Rank = intersections[i].Line2.Rank;
-                intersections[i].Line2.Rank = temp;
+                // When three or more lines intersect at one point
+                var tempIntersecs = new List<Intersection>();
+                if (i + 1 < intersections.Count)
+                {
+                    while (intersections[i].IntersectionPointX == intersections[i + 1].IntersectionPointX 
+                        && intersections[i].IntersectionPointY == intersections[i + 1].IntersectionPointY)
+                    {
+                        if (!tempIntersecs.Contains(intersections[i]))
+                            tempIntersecs.Add(intersections[i]);
+
+                        i += 1;
+
+                        if (!tempIntersecs.Contains(intersections[i]))
+                            tempIntersecs.Add(intersections[i]);
+
+                        // Reach the last element
+                        if (i == intersections.Count) break;
+                    }
+                }
+
+                if (tempIntersecs.Count == 0)
+                {
+                    var temp = intersections[i].Line1.Rank;
+                    intersections[i].Line1.Rank = intersections[i].Line2.Rank;
+                    intersections[i].Line2.Rank = temp;
+                }
+                // When three or more lines intersect at one point
+                else
+                {
+                    var tlines = new List<Line>();
+                    foreach (var t in tempIntersecs)
+                    {
+                        if (!tlines.Contains(t.Line1)) tlines.Add(t.Line1);
+                        if (!tlines.Contains(t.Line2)) tlines.Add(t.Line2);
+                    }
+                    SortMultipleLineIntersection(tlines, intersections[i].IntersectionPointX);
+                }
 
                 var l = lines.Find(x => x.Rank == lines.Count / 2 + 1);
                 if (segments.Last().Line != l)
@@ -125,6 +160,29 @@ namespace _2IMA15_Project_Team9
             segments.RemoveAll(x => x.BeginPoint == x.Endpoint);
 
             return segments;
+        }
+
+        private void SortMultipleLineIntersection(List<Line> lines, double intersectionX)
+        {
+            var dic = new Dictionary<double, Line>();
+            foreach (var l in lines)
+            {
+                dic.Add((intersectionX - 1) * l.D + l.T, l);
+            }
+            var keys = dic.Keys.ToList();
+            keys.Sort();
+
+            for (int i = 0; i < keys.Count / 2; i++)
+            {
+                Line l1 = null;
+                dic.TryGetValue(keys[i], out l1);
+                Line l2 = null;
+                dic.TryGetValue(keys[keys.Count - 1 - i], out l2);
+
+                int rank = l1.Rank;
+                l1.Rank = l2.Rank;
+                l2.Rank = rank;
+            }
         }
 
         private List<Intersection> CalculateIntersections(List<Line> lines)
@@ -143,7 +201,6 @@ namespace _2IMA15_Project_Team9
                     }
                 }
             }
-            intersections.Sort();
 
             return intersections;
         }
@@ -198,7 +255,8 @@ namespace _2IMA15_Project_Team9
 
         public int CompareTo(object obj)
         {
-            return this.IntersectionPointX.CompareTo(((Intersection)obj).IntersectionPointX);
+            var byX = IntersectionPointX.CompareTo(((Intersection)obj).IntersectionPointX);
+            return byX;
         }
     }
 
