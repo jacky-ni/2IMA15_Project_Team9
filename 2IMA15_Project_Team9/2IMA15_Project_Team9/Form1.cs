@@ -149,7 +149,7 @@ namespace _2IMA15_Project_Team9
             _cutD = tcc.CutD;
             _cutT = tcc.CutT;
             _form.Refresh();
-
+            
             _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + _fileName + "Cut.txt");
 
             button6.Enabled = false;

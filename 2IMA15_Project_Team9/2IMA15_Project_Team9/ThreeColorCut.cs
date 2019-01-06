@@ -77,9 +77,8 @@ namespace _2IMA15_Project_Team9
                 cutTs.Add(-t.IntersectionPointY);
             }
             
-
+            // To be removed
             string msgtoShow = "";
-
 
             for (int i = 0; i < cutDs.Count; i++)
             {
@@ -139,6 +138,7 @@ namespace _2IMA15_Project_Team9
                     }
                 }
 
+                // To be removed
                 msgtoShow += "up1: " + up1 + " bot1: " + bot1 + " up2: " + up2 + " bot2: " + bot2 + " ol1: " + ol1 + " ol2 " + ol2 + "\r\n";
 
                 if (up1 == bot1 && up2 == bot2 && ol1 == 1 && ol2 == 1)
@@ -186,7 +186,7 @@ namespace _2IMA15_Project_Team9
         {
             var swaps = new List<Swap>();
 
-            #region when colored point is on the cut
+            #region when point whose colored is modified is on the cut
 
             var _modifiedColorData = ols.Where(x => x.Color != x.ModifiedColor).ToList();
             DataGenerator.DataPoint shad = null;

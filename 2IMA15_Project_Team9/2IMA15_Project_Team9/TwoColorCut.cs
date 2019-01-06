@@ -39,8 +39,6 @@ namespace _2IMA15_Project_Team9
                     if (intersec.IntersectionPointX > Math.Max(seg1[i].BeginPoint, seg2[j].BeginPoint) &&
                         intersec.IntersectionPointX < Math.Min(seg1[i].Endpoint, seg2[j].Endpoint))
                     {
-                        // We do not use auxiliary points (points whose color are changed) as the intersection line
-                        // Because this will effect the later swaps
                         //if (_modifiedColorData.Where(x => (x.X == seg1[i].Line.D && x.Y == -seg1[i].Line.T) ||
                         //     (x.X == seg2[i].Line.D && x.Y == -seg2[i].Line.T)).ToList().Count == 0)
                         //{
