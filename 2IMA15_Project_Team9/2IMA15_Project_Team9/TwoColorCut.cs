@@ -132,6 +132,7 @@ namespace _2IMA15_Project_Team9
                         if (!tlines.Contains(t.Line1)) tlines.Add(t.Line1);
                         if (!tlines.Contains(t.Line2)) tlines.Add(t.Line2);
                     }
+                    tlines = tlines.OrderBy(x => x.Rank).ToList();
                     SortMultipleLineIntersection(tlines, intersections[i].IntersectionPointX);
                 }
 
