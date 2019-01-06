@@ -149,7 +149,15 @@ namespace _2IMA15_Project_Team9
             _cutD = tcc.CutD;
             _cutT = tcc.CutT;
             _form.Refresh();
-            
+
+            if (tcc.OnLines.First().X != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.First().ID).X ||
+                tcc.OnLines.First().Y != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.First().ID).Y ||
+                tcc.OnLines.Last().X != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.Last().ID).X ||
+                tcc.OnLines.Last().Y != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.Last().ID).Y)
+            {
+                bool stop = true;
+            }
+
             _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + _fileName + "Cut.txt");
 
             button6.Enabled = false;
@@ -221,17 +229,19 @@ namespace _2IMA15_Project_Team9
 
         private void _form_Paint(object sender, PaintEventArgs e)
         {
-            var radius = 5;
+            var radius = 4;
             foreach (var p in _rawdata)
             {
+                if (p.Swapped) radius = 10;
+                else radius = 4;
                 if (p.Color == 1)
-                    e.Graphics.DrawEllipse(Pens.Blue, (float)p.X, (float)p.Y, radius, radius);
+                    e.Graphics.DrawEllipse(Pens.Blue, (float)p.X-radius/2, (float)p.Y - radius / 2, radius, radius);
                 else if (p.Color == 2)
-                    e.Graphics.DrawEllipse(Pens.Red, (float)p.X, (float)p.Y, radius, radius);
+                    e.Graphics.DrawEllipse(Pens.Red, (float)p.X - radius / 2, (float)p.Y - radius / 2, radius, radius);
                 else if (p.Color == 3)
-                    e.Graphics.DrawEllipse(Pens.Green, (float)p.X, (float)p.Y, radius, radius);
+                    e.Graphics.DrawEllipse(Pens.Green, (float)p.X - radius / 2, (float)p.Y - radius / 2, radius, radius);
                 else
-                    e.Graphics.DrawRectangle(Pens.Black, (float)p.X, (float)p.Y, radius, radius);
+                    e.Graphics.DrawRectangle(Pens.Black, (float)p.X - radius / 2, (float)p.Y - radius / 2, radius, radius);
             }
             if (_cutT != 0 && _cutD != 0)
             {

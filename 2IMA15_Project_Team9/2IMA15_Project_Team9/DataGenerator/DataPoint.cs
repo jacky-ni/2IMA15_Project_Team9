@@ -6,7 +6,23 @@ namespace _2IMA15_Project_Team9.DataGenerator
 
     class DataPoint : ICloneable
     {
-        public int ID { get; set; }
+        private int iD;
+        public int ID
+        {
+            get
+            {
+                return iD;
+            }
+            set
+            {
+                iD = value;
+                //ModifiedID = iD;
+            }
+        }
+
+        //public int ModifiedID { get; set; }
+
+        public bool Swapped { get; set; }
 
         // Location of the data points.
         public double X { get; set; }
@@ -27,6 +43,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
 
         public DataPoint(double x, double y)
         {
+            Swapped = false;
             X = x;
             Y = y;
         }
@@ -40,6 +57,8 @@ namespace _2IMA15_Project_Team9.DataGenerator
         {
             var p = new DataPoint(X, Y);
             p.Color = color;
+            p.Swapped = false;
+            p.ID = iD;
             return p;
         }
     }

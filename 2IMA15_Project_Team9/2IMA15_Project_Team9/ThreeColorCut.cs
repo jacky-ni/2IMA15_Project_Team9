@@ -62,19 +62,19 @@ namespace _2IMA15_Project_Team9
 
         private void CalculateCut()
         {
-            var set1 = _rawData.Where(x => x.ModifiedColor == 1).ToList();
+            var set1 = _rawData.FindAll(x => x.ModifiedColor == 1);
             var set2 = new List<DataGenerator.DataPoint>();
             if (set1.Count == 0)
             {
-                set1 = _rawData.Where(x => x.ModifiedColor == 2).ToList();
-                set2 = _rawData.Where(x => x.ModifiedColor == 3).ToList();
+                set1 = _rawData.FindAll(x => x.ModifiedColor == 2);
+                set2 = _rawData.FindAll(x => x.ModifiedColor == 3);
             }
             else
             {
-                set2 = _rawData.Where(x => x.ModifiedColor == 2).ToList();
+                set2 = _rawData.FindAll(x => x.ModifiedColor == 2);
                 if (set2.Count == 0)
                 {
-                    set2 = _rawData.Where(x => x.ModifiedColor == 3).ToList();
+                    set2 = _rawData.FindAll(x => x.ModifiedColor == 3);
                 }
             }
 
@@ -159,13 +159,27 @@ namespace _2IMA15_Project_Team9
                     var swaps = CalculateSwap(cutDs[i], cutTs[i], ups, bots, ols);
 
                     // Get the line with minimum swaps.
-                    if (swaps.Count < Swaps.Count || Swaps.Count == 0)
+                    if (i == 0)
                     {
                         CutD = cutDs[i];
                         CutT = cutTs[i];
                         Swaps = swaps;
                         OnLines = ols;
                     }
+                    else
+                    {
+                        if (swaps.Count < Swaps.Count)
+                        {
+                            CutD = cutDs[i];
+                            CutT = cutTs[i];
+                            Swaps = swaps;
+                            OnLines = ols;
+                        }
+                    }
+                }
+                else
+                {
+                    bool stop = true;
                 }
             }
 
@@ -180,6 +194,11 @@ namespace _2IMA15_Project_Team9
 
         private void DisplayInformation()
         {
+            foreach (var s in Swaps)
+            {
+                s.ExecuteSwap(_rawData);
+            }
+
             int rups = 0, rbots = 0, bups = 0, bbots = 0, gups = 0, gbots = 0;
             var teline = new Line(CutD, CutT, 0);
             
@@ -256,54 +275,58 @@ namespace _2IMA15_Project_Team9
         /// The same proof can be applied for set 2.
         /// Therefore, we are sure that the number of points of set 3 in one both sides of the cut is even.     
         /// </summary>
-        /// <param name="D"></param>
-        /// <param name="T"></param>
-        /// <returns></returns>
+        /// <param name="D">y=D*x+T</param>
+        /// <param name="T">y=D*x+T</param>
+        /// <returns>list of swaps</returns>
         private List<Swap> CalculateSwap(double D, double T, List<DataGenerator.DataPoint> ups, List<DataGenerator.DataPoint> bots, List<DataGenerator.DataPoint> ols)
         {
             var swaps = new List<Swap>();
 
-            #region when point whose colored is modified is on the cut
+            #region when point whose color is modified is on the cut
 
             var _modifiedColorData = ols.Where(x => x.Color != x.ModifiedColor).ToList();
             DataGenerator.DataPoint shad = null;
-            var tu = ups.Where(x => x.Color != x.ModifiedColor).ToList();
-            var tb = bots.Where(x => x.Color != x.ModifiedColor).ToList();
             if (_modifiedColorData.Count == 1)
             {
+                var tu = ups.Where(x => x.Color != x.ModifiedColor).ToList();
+                var tb = bots.Where(x => x.Color != x.ModifiedColor).ToList();
+                var p = ols.Find(x => x.Color != x.ModifiedColor);
+
                 if (tu.Count % 2 != 0)
                 {
-                    shad = ups.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
+                    shad = ups.FindAll(y => y.Color == y.ModifiedColor && y.Color == p.ModifiedColor).First();
                     ups.Remove(shad);
-                    ups.Add(_modifiedColorData[0]);
+                    ups.Add(p);
                 }
                 if (tb.Count % 2 != 0)
                 {
-                    shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
+                    shad = bots.FindAll(y => y.Color == y.ModifiedColor && y.Color == p.ModifiedColor).First();
                     bots.Remove(shad);
-                    bots.Add(_modifiedColorData[0]);
+                    bots.Add(p);
                 }
-                //shad.Color = _modifiedColorData[0].Color;
-                //shad.ModifiedColor = _modifiedColorData[0].ModifiedColor;
-                //_modifiedColorData[0].Color = _modifiedColorData[0].ModifiedColor;
-                ols.Remove(_modifiedColorData[0]);
+                
+                swaps.Add(new Swap(p, shad));
+                ols.RemoveAt(0);
                 ols.Add(shad);
-                swaps.Add(new Swap(_modifiedColorData[0], shad, _rawData));
             }
             if (_modifiedColorData.Count == 2)
             {
-                shad = ups.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
-                swaps.Add(new Swap(_modifiedColorData[0], shad, _rawData));
+                var p1 = ols.FindAll(x => x.Color != x.ModifiedColor).First();
+                var p2 = ols.FindAll(x => x.Color != x.ModifiedColor).Last();
+
+                shad = ups.Where(y => y.Color == y.ModifiedColor && y.Color == ols[0].ModifiedColor).First();
                 ups.Remove(shad);
-                ups.Add(_modifiedColorData[0]);
-                ols.Remove(_modifiedColorData[0]);
+                ups.Add(p1);
+                swaps.Add(new Swap(ols[0], shad));
+                ols.RemoveAt(0);
                 ols.Add(shad);
 
-                shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == _modifiedColorData[0].ModifiedColor).First();
-                swaps.Add(new Swap(_modifiedColorData[1], shad, _rawData));
+                shad = bots.Where(y => y.Color == y.ModifiedColor && y.Color == ols[0].ModifiedColor).First();
                 bots.Remove(shad);
-                bots.Add(_modifiedColorData[1]);
-                ols.Remove(_modifiedColorData[1]);
+                bots.Add(p2);
+                
+                swaps.Add(new Swap(ols[0], shad));
+                ols.RemoveAt(0);
                 ols.Add(shad);
             }
 
@@ -326,14 +349,14 @@ namespace _2IMA15_Project_Team9
             }
             
             // green being red on top side
-            var set3BeSet1ColorInUps = ups.Where(x => x.Color != x.ModifiedColor && x.ModifiedColor == set1Color).ToList();
+            var set3BeSet1ColorInUps = ups.FindAll(x => x.Color != x.ModifiedColor && x.ModifiedColor == set1Color);
             // green being blue on top side
-            var set3BeSet2ColorInUps = ups.Where(x => x.Color != x.ModifiedColor && x.ModifiedColor == set2Color).ToList();
+            var set3BeSet2ColorInUps = ups.FindAll(x => x.Color != x.ModifiedColor && x.ModifiedColor == set2Color);
 
             // green being red on bot side
-            var set3BeSet1InBots = bots.Where(x => x.Color != x.ModifiedColor && x.ModifiedColor == set1Color).ToList();
+            var set3BeSet1InBots = bots.FindAll(x => x.Color != x.ModifiedColor && x.ModifiedColor == set1Color);
             // green being blue on bot side
-            var set3BeSet2InBots = bots.Where(x => x.Color != x.ModifiedColor && x.ModifiedColor == set2Color).ToList();
+            var set3BeSet2InBots = bots.FindAll(x => x.Color != x.ModifiedColor && x.ModifiedColor == set2Color);
 
             // process set3BeSetColor1
             var setToBeSwapedA = new List<DataGenerator.DataPoint>();
@@ -341,23 +364,23 @@ namespace _2IMA15_Project_Team9
             if (set3BeSet1ColorInUps.Count > set3BeSet1InBots.Count)
             {
                 setToBeSwapedA = set3BeSet1ColorInUps;
-                setToBeSwapedB = bots.Where(x => x.Color == set1Color).ToList();
+                setToBeSwapedB = bots.FindAll(x => x.Color == set1Color);
             }
             else
             {
                 setToBeSwapedA = set3BeSet1InBots;
-                setToBeSwapedB = ups.Where(x => x.Color == set1Color).ToList();
+                setToBeSwapedB = ups.FindAll(x => x.Color == set1Color);
             }
             // differ should always be even
             var differ = Math.Abs(set3BeSet1ColorInUps.Count - set3BeSet1InBots.Count);
             if (differ % 2 != 0)
             {
-                //breakpoint here for testing
+                // Should never reach here.
                 bool stop = true;
             }
             for (int i = 0; i < differ / 2; i++)
             {
-                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i], _rawData);
+                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
                 swaps.Add(swap);
             }
 
@@ -367,32 +390,27 @@ namespace _2IMA15_Project_Team9
             if (set3BeSet2ColorInUps.Count > set3BeSet2InBots.Count)
             {
                 setToBeSwapedA = set3BeSet2ColorInUps;
-                setToBeSwapedB = bots.Where(x => x.Color == set2Color).ToList();
+                setToBeSwapedB = bots.FindAll(x => x.Color == set2Color);
             }
             else
             {
                 setToBeSwapedA = set3BeSet2InBots;
-                setToBeSwapedB = ups.Where(x => x.Color == set2Color).ToList();
+                setToBeSwapedB = ups.FindAll(x => x.Color == set2Color);
             }
             // differ should always be even
             differ = Math.Abs(set3BeSet2ColorInUps.Count - set3BeSet2InBots.Count);
             if (differ % 2 != 0)
             {
-                //breakpoint here for testing
+                // Should never reach here.
                 bool stop = true;
             }
             for (int i = 0; i < differ / 2; i++)
             {
-                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i], _rawData);
+                var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
                 swaps.Add(swap);
             }
 
             return swaps;
-        }
-
-        private void SwitchTwoPoints()
-        {
-
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
@@ -488,7 +506,7 @@ namespace _2IMA15_Project_Team9
 
             // Make sure number of points whose color is modified to other two sets are both even
             // so that the number of points of the other two sets is still odd, which satisifies the requirement of two colors cut Alg
-            var set = rawdata.Where(x => x.ModifiedColor != rawdata.First().ModifiedColor).ToList();
+            var set = rawdata.FindAll(x => x.ModifiedColor != rawdata.First().ModifiedColor);
             if (set.Count % 2 != 0)
             {
                 rawdata.Where(x => x.ModifiedColor != rawdata.First().ModifiedColor).First().ModifiedColor = rawdata.First().ModifiedColor;
@@ -533,19 +551,30 @@ namespace _2IMA15_Project_Team9
         public DataGenerator.DataPoint PointA { get;private set; }
         public DataGenerator.DataPoint PointB { get;private set; }
 
-        public Swap(DataGenerator.DataPoint ina, DataGenerator.DataPoint inb, List<DataGenerator.DataPoint> rawdata)
+        public Swap(DataGenerator.DataPoint ina, DataGenerator.DataPoint inb)
         {
             PointA = ina;
             PointB = inb;
+        }
 
+        public void ExecuteSwap(List<DataGenerator.DataPoint> rawdata)
+        {
             var a = rawdata.Find(x => x.ID == PointA.ID);
             var b = rawdata.Find(x => x.ID == PointB.ID);
             var tax = a.X;
             var tay = a.Y;
+
+            // ID follows the position
+            var aid = a.ID;
             a.X = b.X;
             a.Y = b.Y;
+            a.ID = b.ID;
             b.X = tax;
             b.Y = tay;
+            b.ID = aid;
+
+            a.Swapped = true;
+            b.Swapped = true;
         }
 
         public override string ToString()
