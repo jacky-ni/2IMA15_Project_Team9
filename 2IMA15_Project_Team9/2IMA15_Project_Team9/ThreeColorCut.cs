@@ -43,23 +43,12 @@ namespace _2IMA15_Project_Team9
             {
                 _rawDataBackUp.Add((DataGenerator.DataPoint)x.Clone());
             });
-
-            //CheckDataValidation();
+            
             ModifyColor();
             CalculateCut();
             DisplayInformation();
         }
-
-        private void CheckDataValidation()
-        {
-            var set1 = _rawData.Where(x => x.Color == 1).ToList();
-            var set2 = _rawData.Where(x => x.Color == 2).ToList();
-            var set3 = _rawData.Where(x => x.Color == 3).ToList();
-
-            //if (set1.Count < _minimumT || set2.Count < _minimumT || set3.Count < _minimumT)
-            //    throw new Exception("ThreeCutAlg: Insufficient fata.");
-        }
-
+        
         private void CalculateCut()
         {
             var set1 = _rawData.FindAll(x => x.ModifiedColor == 1);
@@ -85,10 +74,7 @@ namespace _2IMA15_Project_Team9
                 cutDs.Add(t.IntersectionPointX);
                 cutTs.Add(-t.IntersectionPointY);
             }
-
-            // To be removed
-            string msgtoShow = "";
-
+            
             var ups = new List<DataGenerator.DataPoint>();
             var bots = new List<DataGenerator.DataPoint>();
             var ols = new List<DataGenerator.DataPoint>();
@@ -150,10 +136,7 @@ namespace _2IMA15_Project_Team9
                         }
                     }
                 }
-
-                // To be removed
-                msgtoShow += "up1: " + up1 + " bot1: " + bot1 + " up2: " + up2 + " bot2: " + bot2 + " ol1: " + ol1 + " ol2 " + ol2 + "\r\n";
-
+                
                 if (up1 == bot1 && up2 == bot2 && ol1 == 1 && ol2 == 1)
                 {
                     var swaps = CalculateSwap(cutDs[i], cutTs[i], ups, bots, ols);
@@ -182,18 +165,16 @@ namespace _2IMA15_Project_Team9
                     bool stop = true;
                 }
             }
-
-            //Message += msgtoShow;
-
-            Message += "\r\nThose two points is the cut.\r\n";
-            foreach (var l in ols)
-            {
-                Message += l.ToString() + "\r\n";
-            }
         }
 
         private void DisplayInformation()
         {
+            Message += "\r\nThose two points is the cut.\r\n";
+            foreach (var l in OnLines)
+            {
+                Message += l.ToString() + "\r\n";
+            }
+
             foreach (var s in Swaps)
             {
                 s.ExecuteSwap(_rawData);
@@ -205,6 +186,7 @@ namespace _2IMA15_Project_Team9
             foreach (var d in _rawData)
             {
                 double r = OnTopOfLine(d, teline);
+
                 // This is where the error happens.
                 if (Math.Abs(r) < _errorT)
                 {

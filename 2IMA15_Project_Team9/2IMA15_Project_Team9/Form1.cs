@@ -29,8 +29,6 @@ namespace _2IMA15_Project_Team9
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //try
-            //{
             _fileName = @"\GeneralCaseDataset";
             if (!Initialize(sender, e)) return;
 
@@ -39,17 +37,10 @@ namespace _2IMA15_Project_Team9
 
             _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
             openNewForm(_fileName);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Source + " " + ex.Message);
-            //}
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //try
-            //{
             _fileName = @"\GeneralBadCaseDataset";
             if (!Initialize(sender, e)) return;
 
@@ -58,17 +49,10 @@ namespace _2IMA15_Project_Team9
 
             _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
             openNewForm(_fileName);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Source + " " + ex.Message);
-            //}
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //try
-            //{
             _fileName = @"\BestCaseDataset";
             if (!Initialize(sender, e)) return;
 
@@ -77,17 +61,10 @@ namespace _2IMA15_Project_Team9
 
             _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
             openNewForm(_fileName);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Source + " " + ex.Message);
-            //}
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            //try
-            //{
             _fileName = @"\WorstCaseDataset";
             if (!Initialize(sender, e)) return;
 
@@ -96,11 +73,6 @@ namespace _2IMA15_Project_Team9
 
             _dataReaderWriter.WriteRawData(_rawdata, _directoryPath + _fileName + ".txt");
             openNewForm(_fileName);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Source + " " + ex.Source);
-            //}
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -123,10 +95,8 @@ namespace _2IMA15_Project_Team9
 
         private void button6_Click(object sender, EventArgs e)
         {
-            //try
-            //{
             //Test();
-
+            //return;
             if (_rawdata == null)
             {
                 MessageBox.Show("Error, No data generated or loaded.");
@@ -161,11 +131,6 @@ namespace _2IMA15_Project_Team9
             _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + _fileName + "Cut.txt");
 
             button6.Enabled = false;
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Source + " " + ex.Message);
-            //}
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
