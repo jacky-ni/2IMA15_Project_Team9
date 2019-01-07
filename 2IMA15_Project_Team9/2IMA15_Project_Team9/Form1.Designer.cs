@@ -45,6 +45,7 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.lbinfo = new System.Windows.Forms.Label();
+            this.button7 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -166,7 +167,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 611);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 661);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(784, 22);
             this.statusStrip1.TabIndex = 13;
@@ -209,11 +210,23 @@
             this.lbinfo.TabIndex = 16;
             this.lbinfo.Text = "Information: ";
             // 
+            // button7
+            // 
+            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button7.Location = new System.Drawing.Point(35, 608);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(276, 50);
+            this.button7.TabIndex = 17;
+            this.button7.Text = "TEST";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 633);
+            this.ClientSize = new System.Drawing.Size(784, 683);
+            this.Controls.Add(this.button7);
             this.Controls.Add(this.lbinfo);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
@@ -258,6 +271,7 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label lbinfo;
+        private System.Windows.Forms.Button button7;
     }
 }
 

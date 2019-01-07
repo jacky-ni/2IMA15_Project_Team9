@@ -328,5 +328,15 @@ namespace _2IMA15_Project_Team9
 
             openNewForm(@"\testData.txt");
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                button1_Click(sender, e);
+                button6_Click(sender, e);
+                _form.Close();
+            }
+        }
     }
 }

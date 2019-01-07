@@ -6,6 +6,8 @@ namespace _2IMA15_Project_Team9
 {
     class TwoColorCut
     {
+        private double _errorT = Math.Pow(10, -10);
+
         private List<DataGenerator.DataPoint> _rawdata1 = null;
         private List<DataGenerator.DataPoint> _rawdata2 = null;
         public List<Intersection> Intersections { get; private set; }
@@ -40,6 +42,29 @@ namespace _2IMA15_Project_Team9
             //        }
             //    }
             //}
+
+            for (int i = 0; i < seg1.Count -1; i++)
+            {
+                if (seg1[i].BeginPoint > seg1[i].Endpoint)
+                {
+                    bool stop = true;
+                }
+                if (seg1[i].Endpoint != seg1[i + 1].BeginPoint)
+                {
+                    bool stop = true;
+                }
+            }
+            for (int i = 0; i < seg2.Count - 1; i++)
+            {
+                if (seg2[i].BeginPoint > seg2[i].Endpoint)
+                {
+                    bool stop = true;
+                }
+                if (seg2[i].Endpoint != seg2[i + 1].BeginPoint)
+                {
+                    bool stop = true;
+                }
+            }
 
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
@@ -108,7 +133,7 @@ namespace _2IMA15_Project_Team9
             }
 
             var middleLine = lines.Find(x => x.Rank == lines.Count / 2 + 1);
-            segments.Add(new LineSegment(middleLine, double.MinValue, intersections[0].IntersectionPointX));
+            segments.Add(new LineSegment(middleLine, double.MinValue, double.MinValue));
 
             for (int i = 0; i < intersections.Count; i++)
             {
@@ -116,8 +141,8 @@ namespace _2IMA15_Project_Team9
                 var tempIntersecs = new List<Intersection>();
                 if (i + 1 < intersections.Count)
                 {
-                    while ((intersections[i].IntersectionPointX == intersections[i + 1].IntersectionPointX)
-                        && (intersections[i].IntersectionPointY == intersections[i + 1].IntersectionPointY))
+                    while ((Math.Abs( intersections[i].IntersectionPointX - intersections[i + 1].IntersectionPointX)< _errorT)
+                        && (Math.Abs( intersections[i].IntersectionPointY - intersections[i + 1].IntersectionPointY))< _errorT)
                     {
                         if (!tempIntersecs.Contains(intersections[i]))
                             tempIntersecs.Add(intersections[i]);
@@ -177,7 +202,7 @@ namespace _2IMA15_Project_Team9
             }
             
             segments.Last().Endpoint = double.MaxValue;
-            var seg = segments.FindAll(x => x.BeginPoint == x.Endpoint);
+            // var seg = segments.FindAll(x => x.BeginPoint == x.Endpoint);
             segments.RemoveAll(x => x.BeginPoint == x.Endpoint);
 
             return segments;
