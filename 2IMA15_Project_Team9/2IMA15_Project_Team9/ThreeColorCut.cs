@@ -37,6 +37,7 @@ namespace _2IMA15_Project_Team9
         public ThreeColorCut(List<DataGenerator.DataPoint> rawdata)
         {
             Swaps = new List<Swap>();
+
             _rawData = rawdata;
             _rawDataBackUp = new List<DataGenerator.DataPoint>();
             _rawData.ForEach(x =>

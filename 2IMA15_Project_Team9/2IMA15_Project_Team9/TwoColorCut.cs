@@ -27,6 +27,20 @@ namespace _2IMA15_Project_Team9
 
         private void CalculateIntersectionBetweenSegs(List<LineSegment> seg1, List<LineSegment> seg2)
         {
+            // Brutal alg, used for verification.
+            //foreach (var sg1 in seg1)
+            //{
+            //    foreach (var sg2 in seg2)
+            //    {
+            //        var intersec = new Intersection(sg1.Line, sg2.Line);
+            //        if (intersec.IntersectionPointX > Math.Max(sg1.BeginPoint, sg2.BeginPoint) &&
+            //            intersec.IntersectionPointX < Math.Min(sg1.Endpoint, sg2.Endpoint))
+            //        {
+            //            Intersections.Add(new Intersection(sg1.Line, sg2.Line));
+            //        }
+            //    }
+            //}
+
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
             {
@@ -66,7 +80,7 @@ namespace _2IMA15_Project_Team9
             // All intersections.
             var intersections = CalculateIntersections(lines);
             intersections = intersections.OrderBy(x => x.IntersectionPointX).ThenBy(y => y.IntersectionPointY).ToList();
-            
+
             // Sweep line, starting with x= left most intersection's x value -1
             double sweepLine = double.MaxValue;
             foreach (var intersec in intersections)
@@ -93,16 +107,17 @@ namespace _2IMA15_Project_Team9
                 ranker += 1;
             }
 
-            var line = lines.Find(x => x.Rank == lines.Count / 2 + 1);
-            segments.Add(new LineSegment(line, double.MinValue, intersections[0].IntersectionPointX));
+            var middleLine = lines.Find(x => x.Rank == lines.Count / 2 + 1);
+            segments.Add(new LineSegment(middleLine, double.MinValue, intersections[0].IntersectionPointX));
+
             for (int i = 0; i < intersections.Count; i++)
             {
                 // When three or more lines intersect at one point
                 var tempIntersecs = new List<Intersection>();
                 if (i + 1 < intersections.Count)
                 {
-                    while (intersections[i].IntersectionPointX == intersections[i + 1].IntersectionPointX 
-                        && intersections[i].IntersectionPointY == intersections[i + 1].IntersectionPointY)
+                    while ((intersections[i].IntersectionPointX == intersections[i + 1].IntersectionPointX)
+                        && (intersections[i].IntersectionPointY == intersections[i + 1].IntersectionPointY))
                     {
                         if (!tempIntersecs.Contains(intersections[i]))
                             tempIntersecs.Add(intersections[i]);
@@ -117,16 +132,25 @@ namespace _2IMA15_Project_Team9
                     }
                 }
 
+                var tlines = new List<Line>();
                 if (tempIntersecs.Count == 0)
                 {
                     var temp = intersections[i].Line1.Rank;
                     intersections[i].Line1.Rank = intersections[i].Line2.Rank;
                     intersections[i].Line2.Rank = temp;
+
+                    if (intersections[i].Line1 == middleLine)
+                    {
+                        middleLine = intersections[i].Line2;
+                    }
+                    else if (intersections[i].Line2 == middleLine)
+                    {
+                        middleLine = intersections[i].Line1;
+                    }
                 }
                 // When three or more lines intersect at one point
                 else
                 {
-                    var tlines = new List<Line>();
                     foreach (var t in tempIntersecs)
                     {
                         if (!tlines.Contains(t.Line1)) tlines.Add(t.Line1);
@@ -134,20 +158,26 @@ namespace _2IMA15_Project_Team9
                     }
                     tlines = tlines.OrderBy(x => x.Rank).ToList();
                     SortMultipleLineIntersection(tlines, intersections[i].IntersectionPointX);
+
+                    if (tlines.Contains(middleLine))
+                    {
+                        middleLine = tlines.Find(x => x.Rank == lines.Count / 2 + 1);
+                    }
                 }
 
-                var l = lines.Find(x => x.Rank == lines.Count / 2 + 1);
-                if (segments.Last().Line != l)
+                // middleLine = lines.Find(x => x.Rank == lines.Count / 2 + 1);
+                if (segments.Last().Line != middleLine)
                 {
                     if (segments.Last() != null)
                     {
                         segments.Last().Endpoint = intersections[i].IntersectionPointX;
                     }
-                    segments.Add(new LineSegment(l, intersections[i].IntersectionPointX, intersections[i].IntersectionPointX));
+                    segments.Add(new LineSegment(middleLine, intersections[i].IntersectionPointX, intersections[i].IntersectionPointX));
                 }
             }
             
             segments.Last().Endpoint = double.MaxValue;
+            var seg = segments.FindAll(x => x.BeginPoint == x.Endpoint);
             segments.RemoveAll(x => x.BeginPoint == x.Endpoint);
 
             return segments;
