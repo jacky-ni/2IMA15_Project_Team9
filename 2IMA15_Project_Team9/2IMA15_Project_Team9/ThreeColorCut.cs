@@ -46,6 +46,7 @@ namespace _2IMA15_Project_Team9
             });
             
             ModifyColor();
+            // Calculate two color cut and swap.
             CalculateCut();
             DisplayInformation();
         }
@@ -137,8 +138,9 @@ namespace _2IMA15_Project_Team9
                         }
                     }
                 }
-                
-                if (up1 == bot1 && up2 == bot2 && ol1 == 1 && ol2 == 1)
+
+                // It should always holds, but due to the possible error in 2 cut, we need this as an extra verification.
+                if (up1 == bot1 && up2 == bot2 && ol1 == ol2)
                 {
                     var swaps = CalculateSwap(cutDs[i], cutTs[i], ups, bots, ols);
 
