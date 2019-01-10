@@ -84,7 +84,8 @@ namespace _2IMA15_Project_Team9
                 {
                     _rawdata = _dataReaderWriter.ReadRawData(ofd.FileName);
                     openNewForm(ofd.FileName);
-                    textBox4.Text = Path.GetDirectoryName((ofd.FileName));
+                    textBox4.Text = Path.GetDirectoryName(ofd.FileName);
+                    _fileName = Path.GetFileNameWithoutExtension(ofd.FileName);
                 }
             }
             catch (Exception ex)
@@ -128,7 +129,7 @@ namespace _2IMA15_Project_Team9
                 bool stop = true;
             }
 
-            _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + _fileName + "Cut.txt");
+            _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + "\\" + _fileName + "Cut.txt");
 
             button6.Enabled = false;
         }
@@ -329,14 +330,14 @@ namespace _2IMA15_Project_Team9
             openNewForm(@"\testData.txt");
         }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                button1_Click(sender, e);
-                button6_Click(sender, e);
-                _form.Close();
-            }
-        }
+        //private void button7_Click(object sender, EventArgs e)
+        //{
+        //    for (int i = 0; i < 100; i++)
+        //    {
+        //        button1_Click(sender, e);
+        //        button6_Click(sender, e);
+        //        _form.Close();
+        //    }
+        //}
     }
 }
