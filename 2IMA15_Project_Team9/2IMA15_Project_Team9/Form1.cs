@@ -120,18 +120,12 @@ namespace _2IMA15_Project_Team9
             _cutD = tcc.CutD;
             _cutT = tcc.CutT;
             _form.Refresh();
-
-            if (tcc.OnLines.First().X != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.First().ID).X ||
-                tcc.OnLines.First().Y != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.First().ID).Y ||
-                tcc.OnLines.Last().X != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.Last().ID).X ||
-                tcc.OnLines.Last().Y != tcc.RawDataBackUp.Find(x => x.ID == tcc.OnLines.Last().ID).Y)
-            {
-                bool stop = true;
-            }
-
+            
             _dataReaderWriter.WriteCut(tcc.OnLines.First().ID, tcc.OnLines.Last().ID, tcc.Swaps, _directoryPath + "\\" + _fileName + "Cut.txt");
 
             button6.Enabled = false;
+
+            //File.AppendAllText(_directoryPath + "\\result.txt", textBox3.Text + "," + tcc.Swaps.Count + "\r\n");
         }
 
         private double OnTopOfLine(DataGenerator.DataPoint data, Line line)
@@ -263,80 +257,108 @@ namespace _2IMA15_Project_Team9
         {
             _directoryPath = textBox4.Text;
         }
+        
+        //private void Test()
+        //{
+        //    // Test data.
+        //    _rawdata = new List<DataGenerator.DataPoint>();
+        //    var d = new DataGenerator.DataPoint(200, 100);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(300, 200);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(400, 200);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(500, 300);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(600, 100);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(700, 300);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(800, 400);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(900, 500);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(1000, 600);
+        //    d.Color = 1;
+        //    _rawdata.Add(d);
 
-        /// <summary>
-        /// TEST DATA
-        /// </summary>
-        private void Test()
+        //    d = new DataGenerator.DataPoint(100, 300);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(200, 400);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(300, 600);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(200, 300);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(300, 400);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(400, 600);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(300, 300);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(400, 400);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+        //    d = new DataGenerator.DataPoint(500, 600);
+        //    d.Color = 2;
+        //    _rawdata.Add(d);
+
+        //    openNewForm(@"\testData.txt");
+        //}
+
+        private void Form1_Load(object sender, EventArgs e)
         {
-            // Test data.
-            _rawdata = new List<DataGenerator.DataPoint>();
-            var d = new DataGenerator.DataPoint(200, 100);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(300, 200);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(400, 200);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(500, 300);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(600, 100);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(700, 300);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(800, 400);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(900, 500);
-            d.Color = 1;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(1000, 600);
-            d.Color = 1;
-            _rawdata.Add(d);
 
-            d = new DataGenerator.DataPoint(100, 300);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(200, 400);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(300, 600);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(200, 300);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(300, 400);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(400, 600);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(300, 300);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(400, 400);
-            d.Color = 2;
-            _rawdata.Add(d);
-            d = new DataGenerator.DataPoint(500, 600);
-            d.Color = 2;
-            _rawdata.Add(d);
-
-            openNewForm(@"\testData.txt");
         }
 
         //private void button7_Click(object sender, EventArgs e)
         //{
-        //    for (int i = 0; i < 100; i++)
+        //    textBox3.Text = 10.ToString();
+        //    for (int i = 0; i < 10; i++)
         //    {
-        //        button1_Click(sender, e);
+        //        button3_Click(sender, e);
         //        button6_Click(sender, e);
         //        _form.Close();
+        //    }
+        //    textBox3.Text = 100.ToString();
+        //    for (int i = 0; i < 10; i++)
+        //    {
+        //        button3_Click(sender, e);
+        //        button6_Click(sender, e);
+        //        _form.Close();
+        //    }
+
+        //    for (int j = 1000; j <= 10000; j+=1000)
+        //    {
+        //        textBox3.Text = j.ToString();
+        //        for (int i = 0; i < 10; i++)
+        //        {
+        //            try
+        //            {
+        //                button3_Click(sender, e);
+        //                button6_Click(sender, e);
+        //                _form.Close();
+        //            }
+        //            catch (Exception)
+        //            {
+
+        //            }
+        //        }
         //    }
         //}
     }

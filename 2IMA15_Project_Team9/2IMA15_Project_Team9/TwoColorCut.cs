@@ -42,30 +42,7 @@ namespace _2IMA15_Project_Team9
             //        }
             //    }
             //}
-
-            for (int i = 0; i < seg1.Count -1; i++)
-            {
-                if (seg1[i].BeginPoint > seg1[i].Endpoint)
-                {
-                    bool stop = true;
-                }
-                if (seg1[i].Endpoint != seg1[i + 1].BeginPoint)
-                {
-                    bool stop = true;
-                }
-            }
-            for (int i = 0; i < seg2.Count - 1; i++)
-            {
-                if (seg2[i].BeginPoint > seg2[i].Endpoint)
-                {
-                    bool stop = true;
-                }
-                if (seg2[i].Endpoint != seg2[i + 1].BeginPoint)
-                {
-                    bool stop = true;
-                }
-            }
-
+            
             int index = 0;
             for (int i = 0; i < seg1.Count; i++)
             {

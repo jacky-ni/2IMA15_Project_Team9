@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _2IMA15_Project_Team9
 {
@@ -81,8 +79,12 @@ namespace _2IMA15_Project_Team9
             var bots = new List<DataGenerator.DataPoint>();
             var ols = new List<DataGenerator.DataPoint>();
 
+            var test = "";
+
             for (int i = 0; i < cutDs.Count; i++)
             {
+                test = "";
+
                 ups.Clear();
                 bots.Clear();
                 ols.Clear();
@@ -99,6 +101,11 @@ namespace _2IMA15_Project_Team9
                     if (Math.Abs(r) < _errorT)
                     {
                         r = 0;
+                    }
+
+                    if (Math.Abs(r) < 10)
+                    {
+                        test += p.X + ", " + p.Y + " , distance: " + r + " , Color: " + (DataGenerator.PointColor)p.Color + "   " + (DataGenerator.PointColor)p.ModifiedColor + "\r\n";
                     }
 
                     if (p.ModifiedColor == set1.First().ModifiedColor)
@@ -139,8 +146,8 @@ namespace _2IMA15_Project_Team9
                     }
                 }
 
-                // It should always holds, but due to the possible error in 2 cut, we need this as an extra verification.
-                if (up1 == bot1 && up2 == bot2 && ol1 == ol2)
+                // It should always holds, but due to the possible error (threshold) in 2 cut, we need this as an extra verification.
+                if (up1 == bot1 && up2 == bot2 && ol1 ==1 && 1 == ol2)
                 {
                     var swaps = CalculateSwap(cutDs[i], cutTs[i], ups, bots, ols);
 
@@ -162,10 +169,6 @@ namespace _2IMA15_Project_Team9
                             OnLines = ols;
                         }
                     }
-                }
-                else
-                {
-                    bool stop = true;
                 }
             }
         }
@@ -358,11 +361,6 @@ namespace _2IMA15_Project_Team9
             }
             // differ should always be even
             var differ = Math.Abs(set3BeSet1ColorInUps.Count - set3BeSet1InBots.Count);
-            if (differ % 2 != 0)
-            {
-                // Should never reach here.
-                bool stop = true;
-            }
             for (int i = 0; i < differ / 2; i++)
             {
                 var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
@@ -384,11 +382,6 @@ namespace _2IMA15_Project_Team9
             }
             // differ should always be even
             differ = Math.Abs(set3BeSet2ColorInUps.Count - set3BeSet2InBots.Count);
-            if (differ % 2 != 0)
-            {
-                // Should never reach here.
-                bool stop = true;
-            }
             for (int i = 0; i < differ / 2; i++)
             {
                 var swap = new Swap(setToBeSwapedA[i], setToBeSwapedB[i]);
