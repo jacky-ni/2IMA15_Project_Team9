@@ -71,8 +71,7 @@ namespace _2IMA15_Project_Team9.DataGenerator
             while (counter < vertices.Count)
             {
                 vertices[counter].Color = r.Next(3) + 1;
-                vertices[counter + 1].Color = r.Next(3) + 1;
-                counter += 2;
+                counter += 1;
             }
         }
 
